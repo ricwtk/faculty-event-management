@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full flex justify-center">
-    <EventItem v-for="ev in events"
+  <div class="w-full flex justify-center p-5">
+    <EventItem v-for="ev in events" class="w-lg"
       :name="ev.name"
       :slots="ev.slots"
       :pics="ev.pics"
@@ -29,6 +29,10 @@ const events = ref([{
     "name": "ociroasdf",
     "role": "fdsakfh",
     "confirmed": true
+  },{
+    "name": "ociroasdf",
+    "role": "fdsakfh",
+    "confirmed": false
   }],
   "remarks": "dsiagiusdcuhsdiu"
 },])
