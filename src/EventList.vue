@@ -9,7 +9,7 @@
     ></EventItem>
   </div>
   <Dialog v-model:visible="showEventEdit" modal header="Edit Event" class="w-5xl">
-    <div></div>
+    <EventEdit></EventEdit>
   </Dialog>
 </template>
 
