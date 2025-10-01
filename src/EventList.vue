@@ -1,12 +1,16 @@
 <template>
-  <div class="w-full flex justify-center p-5">
-    <EventItem v-for="ev in events" class="w-lg"
+  <div class="w-full flex flex-col items-center p-5 gap-2">
+    <Button class="w-5xl" @click="addEvent"><i class="pi pi-plus"></i>Add event</Button>
+    <EventItem v-for="ev in events" class="w-5xl"
       :name="ev.name"
       :slots="ev.slots"
       :pics="ev.pics"
       :remarks="ev.remarks"
     ></EventItem>
   </div>
+  <Dialog v-model:visible="showEventEdit" modal header="Edit Event" class="w-5xl">
+    <div></div>
+  </Dialog>
 </template>
 
 <script setup>
@@ -36,4 +40,10 @@ const events = ref([{
   }],
   "remarks": "dsiagiusdcuhsdiu"
 },])
+
+const showEventEdit = ref(true)
+
+const addEvent = () => {
+  showEventEdit.value = true
+}
 </script>
