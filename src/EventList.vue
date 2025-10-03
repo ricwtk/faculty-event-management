@@ -9,7 +9,11 @@
     ></EventItem>
   </div>
   <Dialog v-model:visible="showEventEdit" modal header="Edit Event" class="w-5xl">
-    <EventEdit></EventEdit>
+    <EventEdit v-model:evtypes="newevevtypes"></EventEdit>
+    <div class="flex justify-end gap-2 mt-2">
+      <Button type="button" label="Cancel" severity="secondary" @click=""></Button>
+      <Button type="button" label="Save" @click=""></Button>
+    </div>
   </Dialog>
 </template>
 
@@ -46,4 +50,6 @@ const showEventEdit = ref(true)
 const addEvent = () => {
   showEventEdit.value = true
 }
+
+const newevevtypes = ref([])
 </script>
