@@ -21,5 +21,8 @@
 </template>
 
 <script setup>
-defineProps(["pics"])
+defineProps({
+  pics: Array,
+  edit: Boolean
+})
 </script>

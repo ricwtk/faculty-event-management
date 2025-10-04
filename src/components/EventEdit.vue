@@ -33,7 +33,7 @@
         <div class="text-xs">PICs</div>
         <div class="flex flex-col gap-2 text-sm pt-2">
           <PicEdit v-model="newpic"></PicEdit>
-          <Button severity="secondary"><i class="pi pi-plus"></i>Add</Button>
+          <Button severity="secondary" @click="addpic"><i class="pi pi-plus"></i>Add</Button>
         </div>
         <div class="px-5 mt-2">
           <Pics :pics="pics"></Pics>
@@ -77,7 +77,7 @@ const newslot = ref({
 const newpic = ref({
   "name": "",
   "role": "",
-  "confirmed": ""
+  "confirmed": false
 })
 
 const addevtype = (ev) => {
@@ -90,5 +90,12 @@ const addevtype = (ev) => {
 const removeevtype = (toremove) => {
   console.log(toremove)
   evtypes.value = evtypes.value.filter(item => item !== toremove);
+}
+
+const addpic = () => {
+  pics.value.push({ ...newpic.value })
+  newpic.value.name = ""
+  newpic.value.role = ""
+  newpic.value.confirmed = false
 }
 </script>
