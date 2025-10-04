@@ -36,7 +36,7 @@
           <Button severity="secondary" @click="addpic"><i class="pi pi-plus"></i>Add</Button>
         </div>
         <div class="px-5 mt-2">
-          <Pics :pics="pics"></Pics>
+          <Pics :pics="pics" edit></Pics>
         </div>
         <Divider></Divider>
         <!-- <div class="text-xs mt-2">Remarks</div> -->
@@ -93,9 +93,17 @@ const removeevtype = (toremove) => {
 }
 
 const addpic = () => {
-  pics.value.push({ ...newpic.value })
-  newpic.value.name = ""
-  newpic.value.role = ""
-  newpic.value.confirmed = false
+  let picname = newpic.value.name.trim()
+  let picrole = newpic.value.role.trim()
+  if (!(picname == "" && picrole == "")) {
+    pics.value.push({ 
+      name: picname == "" ? "?" : picname,
+      role: picrole == "" ? "?" : picrole,
+      confirmed: false
+    })
+    newpic.value.name = ""
+    newpic.value.role = ""
+    newpic.value.confirmed = false
+  }
 }
 </script>
