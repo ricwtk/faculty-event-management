@@ -31,12 +31,14 @@
         </div>
         <Divider></Divider>
         <div class="text-xs">PICs</div>
-        <div class="flex flex-col gap-2 text-sm pt-2">
-          <PicEdit v-model="newpic"></PicEdit>
+        <div class="flex flex-col gap-3">
+          <PicEdit v-for="(pic, pidx) in pics" 
+            v-model:name="pic.name"
+            v-model:role="pic.role"
+            v-model:confirmed="pic.confirmed"
+            @delete="deletepic(pidx)"
+          ></PicEdit>
           <Button severity="secondary" @click="addpic"><i class="pi pi-plus"></i>Add</Button>
-        </div>
-        <div class="px-5 mt-2">
-          <Pics :pics="pics" edit></Pics>
         </div>
         <Divider></Divider>
         <!-- <div class="text-xs mt-2">Remarks</div> -->
@@ -74,11 +76,6 @@ const newslot = ref({
   "name": "",
   "remarks": ""
 })
-const newpic = ref({
-  "name": "",
-  "role": "",
-  "confirmed": false
-})
 
 const addevtype = (ev) => {
   let evtype = ev.target.value.trim()
@@ -93,17 +90,14 @@ const removeevtype = (toremove) => {
 }
 
 const addpic = () => {
-  let picname = newpic.value.name.trim()
-  let picrole = newpic.value.role.trim()
-  if (!(picname == "" && picrole == "")) {
-    pics.value.push({ 
-      name: picname == "" ? "?" : picname,
-      role: picrole == "" ? "?" : picrole,
-      confirmed: false
-    })
-    newpic.value.name = ""
-    newpic.value.role = ""
-    newpic.value.confirmed = false
-  }
+  pics.value.push({ 
+    name: "",
+    role: "",
+    confirmed: false
+  })
+}
+const deletepic = (idx) => {
+  console.log(idx)
+  pics.value.splice(idx, 1)
 }
 </script>
