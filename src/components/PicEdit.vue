@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row items-center gap-2">
+  <div class="flex flex-row items-center gap-1">
     <div class="flex-none">
       <Button @click="confirmed = !confirmed" icon="pi" rounded link>
         <i class="pi pi-check text-green-500" v-if="confirmed"></i>
