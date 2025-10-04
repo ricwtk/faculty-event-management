@@ -67,7 +67,10 @@ const remarks = defineModel("remarks")
 const newslot = ref({
   "date": "",
   "time": "",
-  "duration": "",
+  "duration": {
+    "hour": 2,
+    "minute": 0
+  },
   "name": "",
   "remarks": ""
 })

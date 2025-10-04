@@ -1,14 +1,38 @@
 <template>
+  <div class="flex flex-col sm:flex-row gap-2">
+    <FloatLabel variant="on" class="flex-1">
+      <DatePicker id="date" v-model="model.date" class="w-full" fluid/>
+      <label for="date">Date</label>
+    </FloatLabel>
+    <FloatLabel variant="on" class="flex-1">
+      <DatePicker id="time" v-model="model.time" class="w-full" fluid time-only/>
+      <label for="time">Time</label>
+    </FloatLabel>
+  </div>
   <FloatLabel variant="on">
-    <DatePicker id="date" v-model="model.date" class="w-full" fluid/>
-    <label for="date">Date</label>
-  </FloatLabel>
-  <FloatLabel variant="on">
-    <DatePicker id="time" v-model="model.time" class="w-full" fluid time-only/>
-    <label for="time">Time</label>
-  </FloatLabel>
-  <FloatLabel variant="on">
-    <DatePicker id="duration" v-model="model.duration" class="w-full" fluid time-only/>
+    <!-- <DatePicker id="duration" v-model="model.duration" class="w-full" fluid time-only/> -->
+    <Panel style="border: 1px solid var(--p-inputtext-border-color)">
+      <div class="flex flex-row justify-center items-center gap-2">
+        <InputNumber v-model="model.duration.hour" showButtons buttonLayout="vertical" style="width: 3rem" :min="0" :max="99">
+          <template #incrementicon>
+            <span class="pi pi-plus" />
+          </template>
+          <template #decrementicon>
+            <span class="pi pi-minus" />
+          </template>
+        </InputNumber>
+        <span>hours</span>
+        <InputNumber v-model="model.duration.minute" showButtons buttonLayout="vertical" style="width: 3rem" :min="0" :max="59">
+          <template #incrementicon>
+            <span class="pi pi-plus" />
+          </template>
+          <template #decrementicon>
+            <span class="pi pi-minus" />
+          </template>
+        </InputNumber>
+        <span>minutes</span>
+      </div>
+    </Panel>
     <label for="duration">Duration</label>
   </FloatLabel>
   <FloatLabel variant="on">
