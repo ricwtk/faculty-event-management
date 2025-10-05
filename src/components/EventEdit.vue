@@ -22,13 +22,24 @@
       <!-- <div> -->
         <Divider></Divider>
         <div class="text-xs">Slots</div>
-        <div class="flex flex-col gap-2 text-sm pt-2">
+        <div class="flex flex-col gap-3">
+          <TimeSlotEdit v-for="(slot, sidx) in slots" 
+            v-model:datetime="slot.datetime"
+            v-model:duration="slot.duration"
+            v-model:name="slot.name"
+            v-model:remarks="slot.remarks"
+            @delete="deleteslot(sidx)"
+          ></TimeSlotEdit>
+          <Button severity="secondary" @click="addslot"><i class="pi pi-plus"></i>Add</Button>
+        </div>
+
+        <!-- <div class="flex flex-col gap-2 text-sm pt-2">
           <TimeSlotEdit v-model="newslot"></TimeSlotEdit>
           <Button severity="secondary"><i class="pi pi-plus"></i>Add</Button>
         </div>
         <div class="px-5 mt-2">
           <TimeSlots :slots="slots"></TimeSlots>
-        </div>
+        </div> -->
         <Divider></Divider>
         <div class="text-xs">PICs</div>
         <div class="flex flex-col gap-3">
@@ -99,5 +110,21 @@ const addpic = () => {
 const deletepic = (idx) => {
   console.log(idx)
   pics.value.splice(idx, 1)
+}
+
+const addslot = () => {
+  slots.value.push({ 
+    datetime: new Date(),
+    duration: {
+      hour: 2,
+      minute: 0
+    },
+    name: "",
+    remarks: ""
+  })
+}
+const deleteslot = (idx) => {
+  console.log(idx)
+  slots.value.splice(idx, 1)
 }
 </script>
