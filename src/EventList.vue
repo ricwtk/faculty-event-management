@@ -1,6 +1,6 @@
 <template>
   <div class="w-full flex flex-col items-center p-5 gap-2">
-    <Button class="w-5xl" @click="addEvent"><i class="pi pi-plus"></i>Add event</Button>
+    <Button class="w-5xl" @click="addNewEvent"><i class="pi pi-plus"></i>Add event</Button>
     <EventItem v-for="ev in events" class="w-5xl"
       :name="ev.name"
       :slots="ev.slots"
@@ -17,7 +17,7 @@
       v-model:remarks="newevremarks"
     ></EventEdit>
     <div class="flex justify-end gap-2 mt-2">
-      <Button type="button" label="Cancel" severity="secondary" @click=""></Button>
+      <Button type="button" label="Cancel" severity="secondary" @click="showEventEdit=false"></Button>
       <Button type="button" label="Save" @click=""></Button>
     </div>
   </Dialog>
@@ -52,8 +52,16 @@ const events = ref([{
 },])
 
 const showEventEdit = ref(true)
-
-const addEvent = () => {
+const editingEventIdx = ref(-1)
+const addNewEvent = () => {
+  if (editingEventIdx.value != -1) {
+    editingEventIdx.value = -1
+    newevname.value = ""
+    newevevtypes.value = []
+    newevpics.value = []
+    newevslots.value = []
+    newevremarks.value = []
+  }
   showEventEdit.value = true
 }
 
