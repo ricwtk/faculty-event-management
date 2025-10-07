@@ -90,7 +90,7 @@ const newslot = ref({
 
 const addevtype = (ev) => {
   let evtype = ev.target.value.trim()
-  if (!evtypes.includes(evtype)) {
+  if (!evtypes.value.includes(evtype)) {
     evtypes.value.push(evtype)
   }
   ev.target.value = ""

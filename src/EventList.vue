@@ -18,7 +18,7 @@
     ></EventEdit>
     <div class="flex justify-end gap-2 mt-2">
       <Button type="button" label="Cancel" severity="secondary" @click="showEventEdit=false"></Button>
-      <Button type="button" label="Save" @click=""></Button>
+      <Button type="button" label="Save" @click="saveEvent"></Button>
     </div>
   </Dialog>
 </template>
@@ -27,6 +27,7 @@
 import { ref } from 'vue';
 
 const events = ref([{
+  "eventidx": 10,
   "name": "dfafkjdhs",
   "slots": [{
     "date": "2025-12-12",
@@ -52,7 +53,7 @@ const events = ref([{
 },])
 
 const showEventEdit = ref(true)
-const editingEventIdx = ref(-1)
+const editingEventIdx = ref(-1) // index of event in db
 const addNewEvent = () => {
   if (editingEventIdx.value != -1) {
     editingEventIdx.value = -1
@@ -70,4 +71,19 @@ const newevevtypes = ref([])
 const newevpics = ref([])
 const newevslots = ref([])
 const newevremarks = ref("")
+
+const saveEvent = () => {
+  let eventidxinlist = editingEventIdx.value == -1 ? events.value.length : editingEventIdx.value // index in the `events` list
+  let newevent = {
+    eventidx: -1,
+    name: newevname.value,
+    types: JSON.parse(JSON.stringify(newevevtypes.value)),
+    slots: JSON.parse(JSON.stringify(newevslots.value)),
+    pics: JSON.parse(JSON.stringify(newevpics.value)),
+    remarks: newevremarks.value
+  }
+  events.value.splice(eventidxinlist, 0, newevent)
+
+  // save to database and return eventidx 
+}
 </script>
