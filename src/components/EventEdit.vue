@@ -7,10 +7,10 @@
           <label for="eventname">Event Name</label>
         </FloatLabel>
         <FloatLabel variant="on">
-          <AutoComplete id="eventtype" class="w-full" @keyup.space="addevtype" @keyup.enter="addevtype" fluid/>
+          <AutoComplete id="eventtype" class="w-full" @keyup.enter="addevtype" fluid/>
           <label for="eventtype">Event Type</label>
         </FloatLabel>
-        <div class="text-xs">Use space or enter to register the event type</div>
+        <div class="text-xs">Use enter to register the event type</div>
         <div class="pt-1 flex gap-1 text-xs">
           <Chip v-for="(tp, idx) in evtypes" :label="tp" :key="idx" removable @remove="removeevtype(tp)"></Chip>
         </div>
@@ -76,17 +76,6 @@ const remarks = defineModel("remarks")
 // slots: [date: string, time: string, name: string, remarks: string]
 // pics: [name: string, role: string, confirmed: bool]
 // remarks: string
-
-const newslot = ref({
-  "datetime": "",
-  "time": "",
-  "duration": {
-    "hour": 2,
-    "minute": 0
-  },
-  "name": "",
-  "remarks": ""
-})
 
 const addevtype = (ev) => {
   let evtype = ev.target.value.trim()
