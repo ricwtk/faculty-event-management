@@ -10,7 +10,15 @@
       <div>
         <div class="text-xs mt-2">Slots</div>
         <div class="px-5">
-          <TimeSlots :slots="props.slots"></TimeSlots>
+          <div class="flex flex-col gap-3">
+          <TimeSlot v-for="(slot, sidx) in props.slots" 
+            :datetime="slot.datetime"
+            :duration="slot.duration"
+            :name="slot.name"
+            :remarks="slot.remarks"
+          ></TimeSlot>
+        </div>
+          <!-- <TimeSlots :slots="props.slots"></TimeSlots> -->
         </div>
         <div class="text-xs mt-2">PICs</div>
         <div class="px-5">

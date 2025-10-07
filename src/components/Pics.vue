@@ -2,7 +2,7 @@
   <DataView :value="pics">
     <template #list="slotProps">
       <div class="flex flex-col text-sm">
-        <div v-for="(item, index) in slotProps.items" :key="index" class="flex flex-col hover:bg-gray-100 p-1 rounded-sm">
+        <div v-for="(item, index) in slotProps.items" :key="index" class="flex flex-col">
           <div class="flex flex-row items-center gap-2">
             <div class="flex-none">
               <i class="pi pi-check text-green-500" v-if="item.confirmed"></i>

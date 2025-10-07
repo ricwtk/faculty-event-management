@@ -26,33 +26,9 @@
 <script setup>
 import { ref } from 'vue';
 
-const events = ref([{
-  "eventidx": 10,
-  "name": "dfafkjdhs",
-  "slots": [{
-    "date": "2025-12-12",
-    "time": "11:30 - 12:30",
-    "name": "dfsaf",
-    "remarks": "fdasf"
-  },{
-    "date": "2025-12-12",
-    "time": "11:30 - 12:30",
-    "name": "dfsaf",
-    "remarks": ""
-  }],
-  "pics": [{
-    "name": "ociroasdf",
-    "role": "fdsakfh",
-    "confirmed": true
-  },{
-    "name": "ociroasdf",
-    "role": "fdsakfh",
-    "confirmed": false
-  }],
-  "remarks": "dsiagiusdcuhsdiu"
-},])
+const events = ref([])
 
-const showEventEdit = ref(true)
+const showEventEdit = ref(false)
 const editingEventIdx = ref(-1) // index of event in db
 const addNewEvent = () => {
   if (editingEventIdx.value != -1) {
@@ -77,13 +53,29 @@ const saveEvent = () => {
   let newevent = {
     eventidx: -1,
     name: newevname.value,
-    types: JSON.parse(JSON.stringify(newevevtypes.value)),
-    slots: JSON.parse(JSON.stringify(newevslots.value)),
-    pics: JSON.parse(JSON.stringify(newevpics.value)),
+    types: newevevtypes.value.map(v => v),
+    slots: newevslots.value.map(v => ({
+      datetime: v.datetime,
+      duration: {
+        hour: v.duration.hour,
+        minute: v.duration.minute
+      },
+      name: v.name,
+      remarks: v.remarks
+    })),
+    pics: newevpics.value.map(v => ({
+      name: v.name,
+      role: v.role,
+      confirmed: v.confirmed
+    })),
     remarks: newevremarks.value
   }
   events.value.splice(eventidxinlist, 0, newevent)
 
+  showEventEdit.value = false
+
   // save to database and return eventidx 
+
+  events.value[-1].eventidx = 10
 }
 </script>

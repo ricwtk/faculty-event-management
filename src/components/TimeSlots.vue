@@ -6,7 +6,6 @@
           <div class="flex flex-row">{{ item.date }}<Divider layout="vertical"></Divider>{{ item.time }}</div>
           <div class="text-base">{{ item.name }}</div>
           <div class="text-gray-500">{{ item.remarks }}</div>
-          <!-- <Divider v-if="index < slotProps.items.length-1"></Divider> -->
         </div>
       </div>
     </template>
