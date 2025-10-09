@@ -19,8 +19,8 @@
         </div>
       </div>
     </template>
+    {{ user }}
   </Card>
-  {{ user }}
 </template>
 
 <script setup>
@@ -33,20 +33,20 @@ const countdown = ref(0)
 var timer = null
 
 const sendLink = () => {
-  sendLoginLink(email.value)
-
-  linkSent.value = true
-  countdown.value = 60
-
-  timer = setInterval(() => {
-    countdown.value--
-    if (countdown.value <= 0) {
-      clearInterval(timer)
-      linkSent.value = false
-    }
-  }, 1000)
+  sendLoginLink(email.value).then(() => {
+    linkSent.value = true
+    countdown.value = 60
+  
+    timer = setInterval(() => {
+      countdown.value--
+      if (countdown.value <= 0) {
+        clearInterval(timer)
+        linkSent.value = false
+      }
+    }, 1000)
+  })
 }
 
-completeSignIn()
+completeSignIn().then(console.log)
 
 </script>
