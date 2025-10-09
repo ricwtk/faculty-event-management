@@ -5,27 +5,48 @@
     <template #content>
       <div class="flex flex-col gap-2 my-5">
         <InputText v-model="email" name="email" type="text" placeholder="Email" />
-        <InputOtp v-if="otpRequested" v-model="otp" name="otp" :length="6" class="justify-center"/>
-        <Button v-if="!otpRequested" @click="requestotp">Request OTP</Button>
-        <template v-else>
-          <Button @click="signin">Sign in</Button>
-          <Button link @click="requestotp">Resend OTP</Button>
-        </template>
+        <Button @click="sendLink" :disabled="linkSent">
+          <template v-if="!linkSent">
+            Continue with Email
+          </template>
+          <template v-else>
+            Request again in {{ countdown }} s
+          </template>
+        </Button>
+        <div class="text-xs text-center" v-if="linkSent">
+          Check your inbox for the sign-in link sent by 
+          <span class="font-mono">noreply@facultyeventmanager.firebaseapp.com</span>. It may be categorised as junk/spam.
+        </div>
       </div>
     </template>
   </Card>
+  {{ user }}
 </template>
 
 <script setup>
 import { ref } from 'vue';
-const otpRequested = ref(false)
+import { user, sendLoginLink, completeSignIn } from '../composables/useAuth';
+
 const email = ref("")
-const otp = ref()
+const linkSent = ref(false)
+const countdown = ref(0)
+var timer = null
 
-const requestotp = () => {
-  otpRequested.value = true
+const sendLink = () => {
+  sendLoginLink(email.value)
+
+  linkSent.value = true
+  countdown.value = 60
+
+  timer = setInterval(() => {
+    countdown.value--
+    if (countdown.value <= 0) {
+      clearInterval(timer)
+      linkSent.value = false
+    }
+  }, 1000)
 }
 
-const signin = () => {
-}
+completeSignIn()
+
 </script>
