@@ -10,12 +10,16 @@ import {
 
 export const user = ref(null);
 
-onAuthStateChanged(auth, (u) => (user.value = u));
+onAuthStateChanged(auth, (u) => {
+  if (u) {
+    user.value = u
+  }
+});
 
 // Step 1: send sign-in email link
 export function sendLoginLink(email) {
   const actionCodeSettings = {
-    url: import.meta.env.VITE_SITE_URL, // must match Firebase config
+    url: window.location.origin, // must match Firebase config
     handleCodeInApp: true,
   };
   return sendSignInLinkToEmail(auth, email, actionCodeSettings)

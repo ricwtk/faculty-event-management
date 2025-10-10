@@ -19,18 +19,23 @@
         </div>
       </div>
     </template>
-    {{ user }}
   </Card>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { user, sendLoginLink, completeSignIn } from '../composables/useAuth';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase';
 
 const email = ref("")
 const linkSent = ref(false)
 const countdown = ref(0)
 var timer = null
+
+onAuthStateChanged(auth, (u) => {
+  if (u) window.location.href = "/event-list.html";
+})
 
 const sendLink = () => {
   sendLoginLink(email.value).then(() => {
@@ -47,6 +52,6 @@ const sendLink = () => {
   })
 }
 
-completeSignIn().then(console.log)
+completeSignIn()
 
 </script>
