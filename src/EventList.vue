@@ -11,7 +11,7 @@
     <Button class="w-5xl" @click="addNewEvent"><i class="pi pi-plus"></i>Add event</Button>
     <EventItem v-for="(ev, eIdx) in events" class="w-5xl"
       :name="ev.name"
-      :types="ev.types"
+      :categories="ev.categories"
       :slots="ev.slots"
       :pics="ev.pics"
       :remarks="ev.remarks"
@@ -21,7 +21,7 @@
   <Dialog v-model:visible="showEventEdit" modal header="Edit Event" class="w-5xl">
     <EventEdit 
       v-model:name="newevname"
-      v-model:evtypes="newevevtypes"
+      v-model:evcategories="newevevcategories"
       v-model:pics="newevpics"
       v-model:slots="newevslots"
       v-model:remarks="newevremarks"
@@ -47,7 +47,7 @@ const addNewEvent = () => {
   if (editingEventIdx.value != -1) {
     editingEventIdx.value = -1
     newevname.value = ""
-    newevevtypes.value = []
+    newevevcategories.value = []
     newevpics.value = []
     newevslots.value = []
     newevremarks.value = ""
@@ -56,7 +56,7 @@ const addNewEvent = () => {
 }
 
 const newevname = ref("")
-const newevevtypes = ref([])
+const newevevcategories = ref([])
 const newevpics = ref([])
 const newevslots = ref([])
 const newevremarks = ref("")
@@ -66,7 +66,7 @@ const saveEvent = () => {
   let newevent = {
     eventidx: editingEventIdx.value,
     name: newevname.value,
-    types: newevevtypes.value.map(v => v),
+    categories: newevevcategories.value.map(v => v),
     slots: newevslots.value.map(v => ({
       datetime: v.datetime,
       duration: {
@@ -104,7 +104,7 @@ const editEventItem = (idx) => {
   let ev = events.value[idx]
   editingEventIdx.value = ev.eventidx
   newevname.value = ev.name
-  newevevtypes.value = ev.types.map(v => v)
+  newevevcategories.value = ev.categories.map(v => v)
   newevpics.value = ev.pics.map(v => ({
     name: v.name,
     role: v.role,

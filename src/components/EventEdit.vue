@@ -12,9 +12,9 @@
         </FloatLabel>
         <div class="text-xs">Use enter to register the event type</div>
         <div class="pt-1 flex gap-1 text-xs">
-          <Chip v-for="(tp, idx) in evtypes" :label="tp" :key="idx" removable @remove="removeevtype(tp)"></Chip>
+          <Chip v-for="(tp, idx) in evcategories" :label="tp" :key="idx" removable @remove="removeevtype(tp)"></Chip>
         </div>
-        <!-- {{ evtypes }} -->
+        <!-- {{ evcategories }} -->
         <!-- <InputText class="flex-1" v-model="name" placeholder="event name"></InputText> -->
       <!-- </div> -->
     <!-- </template> -->
@@ -67,7 +67,7 @@
 <script setup>
 import { ref } from 'vue'
 const name = defineModel("name")
-const evtypes = defineModel("evtypes")
+const evcategories = defineModel("evcategories")
 const slots = defineModel("slots")
 const pics = defineModel("pics")
 const remarks = defineModel("remarks")
@@ -78,15 +78,15 @@ const remarks = defineModel("remarks")
 // remarks: string
 
 const addevtype = (ev) => {
-  let evtype = ev.target.value.trim()
-  if (!evtypes.value.includes(evtype)) {
-    evtypes.value.push(evtype)
+  let evcategory = ev.target.value.trim()
+  if (!evcategories.value.includes(evcategory)) {
+    evcategories.value.push(evcategory)
   }
   ev.target.value = ""
 }
 const removeevtype = (toremove) => {
   console.log(toremove)
-  evtypes.value = evtypes.value.filter(item => item !== toremove);
+  evcategories.value = evcategories.value.filter(item => item !== toremove);
 }
 
 const addpic = () => {

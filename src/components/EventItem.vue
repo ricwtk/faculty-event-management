@@ -9,7 +9,7 @@
     <template #content>
       <div>
         <div class="pt-1 flex gap-1 text-xs">
-          <Chip v-for="(tp, idx) in types" :label="tp" :key="idx"></Chip>
+          <Chip v-for="(tp, idx) in categories" :label="tp" :key="idx"></Chip>
         </div>
         <div class="text-xs mt-2">Slots</div>
         <div class="px-5">
@@ -38,7 +38,7 @@
 defineProps([
   "name",
   "slots",
-  "types",
+  "categories",
   "pics",
   "remarks"
 ])
