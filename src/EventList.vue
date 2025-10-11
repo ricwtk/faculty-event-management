@@ -2,7 +2,7 @@
   <div class="w-full flex flex-col items-center p-5 gap-2">
     <div class="bg-black w-5xl px-2 py-1 rounded text-xs flex flex-row items-center">
       <div class="flex-1 text-white">
-        Logged in as {{ user ? user.email : "" }}
+        Logged in as {{ user ? user.display : "" }} ({{ user ? user.email : "" }})
       </div>
       <Button @click="logout" label="Log out" severity="secondary" :pt="{
         label: 'text-xs'
@@ -38,6 +38,7 @@ import { ref } from 'vue';
 import { user } from './composables/useAuth';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
+import { useApi } from './composables/useApi';
 
 const events = ref([])
 
@@ -127,7 +128,19 @@ onAuthStateChanged(auth, (u) => {
   if (!u) {
     window.location.href = window.location.origin
   } else {
-    user.value = u
+    useApi(`/users?email=${u.email}`)
+    .then((uinfo) => {
+      user.value = uinfo
+    })
+    .catch((error) => {
+      user.value = {
+        id: null,
+        display: "",
+        email: u.email,
+        roles: ["workshopView"]
+      }
+      window.alert(`${error.message}. Contact Dr Richard to request for permission to access.`)
+    })
   }
 });
 

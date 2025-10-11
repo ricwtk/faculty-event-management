@@ -10,11 +10,11 @@ import {
 
 export const user = ref(null);
 
-onAuthStateChanged(auth, (u) => {
-  if (u) {
-    user.value = u
-  }
-});
+// onAuthStateChanged(auth, (u) => {
+//   if (u) {
+//     user.value = u
+//   }
+// });
 
 // Step 1: send sign-in email link
 export function sendLoginLink(email) {
