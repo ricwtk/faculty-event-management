@@ -8,6 +8,9 @@
         label: 'text-xs'
       }"></Button>
     </div>
+    <div v-if="user && !user.id" class="w-5xl">
+      Contact Dr Richard Wong from SEN to request for permission to view the FET event page
+    </div>
     <Button class="w-5xl" @click="addNewEvent"><i class="pi pi-plus"></i>Add event</Button>
     <EventItem v-for="(ev, eIdx) in events" class="w-5xl"
       :name="ev.name"
@@ -139,7 +142,7 @@ onAuthStateChanged(auth, (u) => {
         email: u.email,
         roles: ["workshopView"]
       }
-      window.alert(`${error.message}. Contact Dr Richard to request for permission to access.`)
+      // window.alert(`${error.message}`)
     })
   }
 });
