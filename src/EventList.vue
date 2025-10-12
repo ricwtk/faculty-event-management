@@ -51,7 +51,13 @@
     </div>
   </Dialog>
 
-  <Toast position="bottom-center"/>
+  <Toast position="bottom-center">
+    <template #container="{ message, closeCallback }">
+      <div class="flex flex-col items-center">
+        <div class="font-medium text-sm m-2">{{ message.detail }}</div>
+      </div>
+    </template>
+  </Toast>
 </template>
 
 <script setup>
@@ -282,6 +288,6 @@ const logout = () => {
 const toast = useToast()
 const showToast = (svrt, msg) => {
   let summary = svrt.charAt(0).toUpperCase() + svrt.slice(1);
-  toast.add({ severity: svrt, summary: summary, detail: msg, life: 3000 })
+  toast.add({ severity: svrt, summary: summary, detail: msg, life: 1500 })
 }
 </script>
