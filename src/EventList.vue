@@ -41,6 +41,8 @@
       </div>
     </div>
   </Dialog>
+
+  <Toast position="bottom-center"/>
 </template>
 
 <script setup>
@@ -49,6 +51,7 @@ import { user } from './composables/useAuth';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import { useApi } from './composables/useApi';
+import { useToast } from 'primevue/usetoast';
 
 const events = ref([])
 
@@ -101,10 +104,15 @@ const saveEvent = () => {
   showEventEdit.value = false
 
   // save to database and return eventid
-  saveEventOnDb(newevent).then((r) => {
+  saveEventOnDb(newevent)
+  .then((r) => {
     if (editingEventId.value == -1) {
       events.value[events.value.length-1].id = r.id
     }
+    showToast("info", r.message)
+  })
+  .catch(e => {
+    showToast("danger", e.error)
   })
 }
 
@@ -136,8 +144,12 @@ const deleteEvent = () => {
   let ev = events.value[idx]
   showEventEdit.value = false
   deleteEventOnDb(ev)
-  .then(() => {
+  .then((r) => {
+    showToast("info", r.message)
     events.value.splice(idx, 1)
+  })
+  .catch((e) => {
+    showToast("danger", e.error)
   })
 }
 
@@ -156,7 +168,7 @@ const getUserMeta = (u) => {
   return useApi(`/users?email=${u.email}`)
     .then((uinfo) => {
       user.value = uinfo
-      console.log(uinfo)
+      // console.log(uinfo)
     })
     .catch((error) => {
       user.value = {
@@ -192,6 +204,11 @@ const getEvents = () => {
       })),
       remarks: ev.remarks
     }))
+  })
+  .then(() => {
+    if (showToast) {
+      showToast("info", "Events loaded")
+    }
   })
 }
 
@@ -236,5 +253,11 @@ const deleteEventOnDb = (ev) => {
 
 const logout = () => {
   signOut(auth)
+}
+
+const toast = useToast()
+const showToast = (svrt, msg) => {
+  let summary = svrt.charAt(0).toUpperCase() + svrt.slice(1);
+  toast.add({ severity: svrt, summary: summary, detail: msg, life: 3000 })
 }
 </script>
