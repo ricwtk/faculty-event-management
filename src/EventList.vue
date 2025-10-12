@@ -155,7 +155,7 @@ const deleteEvent = () => {
 
 onAuthStateChanged(auth, (u) => {
   if (!u) {
-    window.location.href = "/faculty-event-management"
+    window.location.href = import.meta.env.VITE_BASE_URL
   } else {
     getUserMeta(u)
     .then(getEvents)
