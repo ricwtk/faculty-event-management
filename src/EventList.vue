@@ -12,16 +12,22 @@
       Contact Dr Richard Wong from SEN to request for permission to view the FET event page
     </div>
     <Button class="w-5xl" v-if="user && user.roles.includes('eventCreate')" @click="addNewEvent"><i class="pi pi-plus"></i>Add event</Button>
-    <EventItem v-for="(ev, eIdx) in events" class="w-5xl"
-      :id="ev.id"
-      :name="ev.name"
-      :categories="ev.categories"
-      :slots="ev.slots"
-      :pics="ev.pics"
-      :remarks="ev.remarks"
-      @edit="editEventItem(eIdx)"
-      :allow-edit="user && user.roles.includes('eventEdit')"
-    ></EventItem>
+    <DataView :value="events" :sort-field="eventsortkey" :sort-order="1">
+      <template #list="slotProps">
+        <div class="flex flex-col gap-2">
+          <EventItem v-for="(ev, eIdx) in slotProps.items" :key="eIdx" class="w-5xl"
+            :id="ev.id"
+            :name="ev.name"
+            :categories="ev.categories"
+            :slots="ev.slots"
+            :pics="ev.pics"
+            :remarks="ev.remarks"
+            @edit="editEventItem(ev.id)"
+            :allow-edit="user && user.roles.includes('eventEdit')"
+          ></EventItem>
+        </div>
+      </template>
+    </DataView>
   </div>
   <Dialog v-model:visible="showEventEdit" modal header="Edit Event" class="w-5xl">
     <EventEdit 
@@ -67,6 +73,12 @@ const addNewEvent = () => {
     newevremarks.value = ""
   }
   showEventEdit.value = true
+}
+
+const eventsortkey = (ev) => {
+  let alltime = ev.slots.map(v => v.datetime)
+  let mintimestamp = Math.min(...alltime)
+  return new Date(mintimestamp)
 }
 
 const newevname = ref("")
@@ -116,7 +128,8 @@ const saveEvent = () => {
   })
 }
 
-const editEventItem = (idx) => {
+const editEventItem = (id) => {
+  let idx = events.value.findIndex(v => v.id == id)
   let ev = events.value[idx]
   editingEventId.value = ev.id
   newevname.value = ev.name
