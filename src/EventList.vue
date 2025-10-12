@@ -12,6 +12,9 @@
       Contact Dr Richard Wong from SEN to request for permission to view the FET event page
     </div>
     <Button class="w-5xl" v-if="user && user.roles.includes('eventCreate')" @click="addNewEvent"><i class="pi pi-plus"></i>Add event</Button>
+    <div class="flex flex-row w-5xl">
+      <SelectButton v-model="currenttimegroup" :options="timegroups" :allow-empty="false"></SelectButton>
+    </div>
     <DataView :value="events" :sort-field="eventsortkey" :sort-order="1">
       <template #list="slotProps">
         <div class="flex flex-col gap-2">
@@ -52,7 +55,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { user } from './composables/useAuth';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
@@ -60,6 +63,10 @@ import { useApi } from './composables/useApi';
 import { useToast } from 'primevue/usetoast';
 
 const events = ref([])
+
+const timegroups = ["Upcoming", "Past"]
+const currenttimegroup = ref("Upcoming")
+const timegroupurls = ["/events/upcoming", "/events/past"]
 
 const showEventEdit = ref(false)
 const editingEventId = ref(-1) // index of event in db
@@ -120,9 +127,11 @@ const saveEvent = () => {
   .then((r) => {
     if (editingEventId.value == -1) {
       events.value[events.value.length-1].id = r.id
+      editingEventId.value = r.id
     }
     showToast("info", r.message)
   })
+  .then(getEvents)
   .catch(e => {
     showToast("danger", e.error)
   })
@@ -171,9 +180,7 @@ onAuthStateChanged(auth, (u) => {
     window.location.href = import.meta.env.VITE_BASE_URL
   } else {
     getUserMeta(u)
-    .then(getEvents)
-    
-    // getEvents()
+    getEvents()
   }
 });
 
@@ -194,8 +201,12 @@ const getUserMeta = (u) => {
     })
 }
 
+watch(currenttimegroup, (newtimegroup, oldtimegroup) => {
+  getEvents()
+})
+
 const getEvents = () => {
-  return useApi("/events")
+  return useApi(timegroupurls[timegroups.findIndex(tg => tg == currenttimegroup.value)])
   .then((eventsFromDb) => {
     events.value = eventsFromDb.map(ev => ({
       id: ev.id,
