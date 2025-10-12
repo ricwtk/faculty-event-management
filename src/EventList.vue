@@ -11,7 +11,7 @@
     <div v-if="user && !user.id" class="w-5xl">
       Contact Dr Richard Wong from SEN to request for permission to view the FET event page
     </div>
-    <Button class="w-5xl" @click="addNewEvent"><i class="pi pi-plus"></i>Add event</Button>
+    <Button class="w-5xl" v-if="user && user.roles.includes('eventCreate')" @click="addNewEvent"><i class="pi pi-plus"></i>Add event</Button>
     <EventItem v-for="(ev, eIdx) in events" class="w-5xl"
       :id="ev.id"
       :name="ev.name"
@@ -20,6 +20,7 @@
       :pics="ev.pics"
       :remarks="ev.remarks"
       @edit="editEventItem(eIdx)"
+      :allow-edit="user && user.roles.includes('eventEdit')"
     ></EventItem>
   </div>
   <Dialog v-model:visible="showEventEdit" modal header="Edit Event" class="w-5xl">
@@ -30,9 +31,14 @@
       v-model:slots="newevslots"
       v-model:remarks="newevremarks"
     ></EventEdit>
-    <div class="flex justify-end gap-2 mt-2">
-      <Button type="button" label="Cancel" severity="secondary" @click="showEventEdit=false"></Button>
-      <Button type="button" label="Save" @click="saveEvent"></Button>
+    <div class="flex mt-2">
+      <div class="flex-0">
+        <Button type="button" severity="danger" label="Delete" @click="deleteEvent" v-if="user && user.roles.includes('eventDelete')"></Button>
+      </div>
+      <div class="flex-1 flex justify-end gap-2 mt-2">
+        <Button type="button" label="Cancel" severity="secondary" @click="showEventEdit=false"></Button>
+        <Button type="button" label="Save" @click="saveEvent"></Button>
+      </div>
     </div>
   </Dialog>
 </template>
@@ -125,6 +131,10 @@ const editEventItem = (idx) => {
   showEventEdit.value = true
 }
 
+const deleteEvent = (idx) => {
+
+}
+
 onAuthStateChanged(auth, (u) => {
   if (!u) {
     window.location.href = window.location.origin
@@ -210,6 +220,10 @@ const saveEventOnDb = (ev) => {
       body: JSON.stringify(evdata)
     })
   }
+}
+
+const deleteEventOnDb = (ev) => {
+
 }
 
 const logout = () => {

@@ -3,7 +3,7 @@
     <template #title>
       <div class="flex flex-row items-center">
         <div class="flex-1">{{ name }} {{ id }}</div>
-        <Button icon="pi pi-pencil" class="flex-none" rounded variant="text" @click="editItem"></Button>
+        <Button icon="pi pi-pencil" class="flex-none" rounded variant="text" @click="editItem" v-if="allowEdit"></Button>
       </div>
     </template>
     <template #content>
@@ -41,7 +41,8 @@ defineProps([
   "slots",
   "categories",
   "pics",
-  "remarks"
+  "remarks",
+  "allowEdit"
 ])
 // name: string
 // slots: [date: string, time: string, name: string, remarks: string]
