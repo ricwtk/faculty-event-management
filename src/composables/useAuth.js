@@ -19,7 +19,7 @@ export const user = ref(null);
 // Step 1: send sign-in email link
 export function sendLoginLink(email) {
   const actionCodeSettings = {
-    url: window.location.origin, // must match Firebase config
+    url: window.location.origin + "/faculty-event-management", // must match Firebase config
     handleCodeInApp: true,
   };
   return sendSignInLinkToEmail(auth, email, actionCodeSettings)
