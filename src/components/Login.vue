@@ -34,7 +34,7 @@ const countdown = ref(0)
 var timer = null
 
 onAuthStateChanged(auth, (u) => {
-  if (u) window.location.href = "/faculty-event-managment/event-list.html";
+  if (u) window.location.href = "/faculty-event-management/event-list";
 })
 
 const sendLink = () => {
