@@ -2,7 +2,7 @@
   <Card>
     <template #title>
       <div class="flex flex-row items-center">
-        <div class="flex-1">{{ name }}</div>
+        <div class="flex-1">{{ name }} {{ id }}</div>
         <Button icon="pi pi-pencil" class="flex-none" rounded variant="text" @click="editItem"></Button>
       </div>
     </template>
@@ -36,6 +36,7 @@
 
 <script setup>
 defineProps([
+  "id",
   "name",
   "slots",
   "categories",

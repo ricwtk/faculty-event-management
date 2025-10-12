@@ -18,6 +18,9 @@ export async function useApi(path, options = {}) {
   };
 
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  if (!res.ok) throw new Error(`API error ${res.status}`);
+  if (!res.ok) {
+    console.log(res)
+    throw new Error(`API error ${res.status}`);
+  }
   return res.json();
 }

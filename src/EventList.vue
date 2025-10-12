@@ -13,6 +13,7 @@
     </div>
     <Button class="w-5xl" @click="addNewEvent"><i class="pi pi-plus"></i>Add event</Button>
     <EventItem v-for="(ev, eIdx) in events" class="w-5xl"
+      :id="ev.id"
       :name="ev.name"
       :categories="ev.categories"
       :slots="ev.slots"
@@ -46,10 +47,10 @@ import { useApi } from './composables/useApi';
 const events = ref([])
 
 const showEventEdit = ref(false)
-const editingEventIdx = ref(-1) // index of event in db
+const editingEventId = ref(-1) // index of event in db
 const addNewEvent = () => {
-  if (editingEventIdx.value != -1) {
-    editingEventIdx.value = -1
+  if (editingEventId.value != -1) {
+    editingEventId.value = -1
     newevname.value = ""
     newevevcategories.value = []
     newevpics.value = []
@@ -66,9 +67,9 @@ const newevslots = ref([])
 const newevremarks = ref("")
 
 const saveEvent = () => {
-  let eventidxinlist = editingEventIdx.value == -1 ? events.value.length : events.value.findIndex(v => v.eventidx == editingEventIdx.value) // index in the `events` list
+  let eventidxinlist = editingEventId.value == -1 ? events.value.length : events.value.findIndex(v => v.id == editingEventId.value) // index in the `events` list
   let newevent = {
-    eventidx: editingEventIdx.value,
+    id: editingEventId.value,
     name: newevname.value,
     categories: newevevcategories.value.map(v => v),
     slots: newevslots.value.map(v => ({
@@ -87,26 +88,23 @@ const saveEvent = () => {
     })),
     remarks: newevremarks.value
   }
-  let removeN = editingEventIdx.value == -1 ? 0 : 1
+  let removeN = editingEventId.value == -1 ? 0 : 1
   events.value.splice(eventidxinlist, removeN, newevent)
-
-  // console.log(editingEventIdx.value, eventidxinlist, removeN)
+  // console.log(editingEventId.value, eventidxinlist, removeN)
 
   showEventEdit.value = false
 
-  // save to database and return eventidx 
-
-  if (editingEventIdx.value == -1) {
-    // get a unique mock index
-    let newevidx = 0
-    while (events.value.map(ev => ev.eventidx).includes(newevidx)) newevidx++
-    events.value[events.value.length-1].eventidx = newevidx
-  }
+  // save to database and return eventid
+  saveEventOnDb(newevent).then((r) => {
+    if (editingEventId.value == -1) {
+      events.value[events.value.length-1].id = r.id
+    }
+  })
 }
 
 const editEventItem = (idx) => {
   let ev = events.value[idx]
-  editingEventIdx.value = ev.eventidx
+  editingEventId.value = ev.id
   newevname.value = ev.name
   newevevcategories.value = ev.categories.map(v => v)
   newevpics.value = ev.pics.map(v => ({
@@ -131,9 +129,18 @@ onAuthStateChanged(auth, (u) => {
   if (!u) {
     window.location.href = window.location.origin
   } else {
-    useApi(`/users?email=${u.email}`)
+    getUserMeta(u)
+    .then(getEvents)
+    
+    // getEvents()
+  }
+});
+
+const getUserMeta = (u) => {
+  return useApi(`/users?email=${u.email}`)
     .then((uinfo) => {
       user.value = uinfo
+      console.log(uinfo)
     })
     .catch((error) => {
       user.value = {
@@ -144,8 +151,66 @@ onAuthStateChanged(auth, (u) => {
       }
       // window.alert(`${error.message}`)
     })
+}
+
+const getEvents = () => {
+  return useApi("/events")
+  .then((eventsFromDb) => {
+    events.value = eventsFromDb.map(ev => ({
+      id: ev.id,
+      name: ev.name,
+      categories: ev.categories.map(v => v),
+      slots: ev.slots.map(v => ({
+        datetime: new Date(v.datetime),
+        duration: {
+          hour: v.duration.hour,
+          minute: v.duration.minute
+        },
+        name: v.name,
+        remarks: v.remarks
+      })),
+      pics: ev.pics.map(v => ({
+        name: v.name,
+        role: v.role,
+        confirmed: v.confirmed
+      })),
+      remarks: ev.remarks
+    }))
+  })
+}
+
+const saveEventOnDb = (ev) => {
+  let evdata = {
+    name: ev.name,
+    categories: ev.categories.map(v => v),
+    slots: ev.slots.map(v => ({
+      datetime: v.datetime.toISOString(),
+      duration: {
+        hour: v.duration.hour,
+        minute: v.duration.minute
+      },
+      name: v.name,
+      remarks: v.remarks
+    })),
+    pics: ev.pics.map(v => ({
+      name: v.name,
+      role: v.role,
+      confirmed: v.confirmed
+    })),
+    remarks: ev.remarks
   }
-});
+  if (ev.id == -1) {
+    return useApi("/events", {
+      method: "POST",
+      body: JSON.stringify(evdata)
+    })
+  } else {
+    return useApi(`/events/${ev.id}`, {
+      method: "PUT",
+      body: JSON.stringify(evdata)
+    })
+  }
+}
 
 const logout = () => {
   signOut(auth)
