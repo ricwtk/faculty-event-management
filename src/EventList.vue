@@ -33,7 +33,7 @@
     ></EventEdit>
     <div class="flex mt-2">
       <div class="flex-0">
-        <Button type="button" severity="danger" label="Delete" @click="deleteEvent" v-if="user && user.roles.includes('eventDelete')"></Button>
+        <Button type="button" severity="danger" label="Delete" @click="deleteEvent" v-if="user && user.roles.includes('eventDelete') && editingEventId != -1"></Button>
       </div>
       <div class="flex-1 flex justify-end gap-2 mt-2">
         <Button type="button" label="Cancel" severity="secondary" @click="showEventEdit=false"></Button>
@@ -131,8 +131,14 @@ const editEventItem = (idx) => {
   showEventEdit.value = true
 }
 
-const deleteEvent = (idx) => {
-
+const deleteEvent = () => {
+  let idx = events.value.findIndex(v => v.id == editingEventId.value) // index in the `events` list
+  let ev = events.value[idx]
+  showEventEdit.value = false
+  deleteEventOnDb(ev)
+  .then(() => {
+    events.value.splice(idx, 1)
+  })
 }
 
 onAuthStateChanged(auth, (u) => {
@@ -223,7 +229,9 @@ const saveEventOnDb = (ev) => {
 }
 
 const deleteEventOnDb = (ev) => {
-
+  return useApi(`/events/${ev.id}`, {
+    method: "DELETE"
+  })
 }
 
 const logout = () => {
