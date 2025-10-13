@@ -86,12 +86,12 @@ const searchcategory = () => {
 // pics: [name: string, role: string, confirmed: bool]
 // remarks: string
 
-const addevtype = (ev) => {
-  let evcategory = ev.target.value.trim()
+const addevtype = () => {
+  let evcategory = category.value.trim()
   if (!evcategories.value.includes(evcategory)) {
     evcategories.value.push(evcategory)
   }
-  ev.target.value = ""
+  category.value = ""
 }
 const removeevtype = (toremove) => {
   console.log(toremove)
