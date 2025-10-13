@@ -8,11 +8,11 @@
     </div>
     <div class="flex flex-col sm:flex-row flex-1 gap-1">
       <FloatLabel variant="on" class="flex-1">
-        <AutoComplete id="name" v-model="name" class="w-full" fluid/>
+        <AutoComplete id="name" v-model="name" class="w-full" :suggestions="filteredname" @complete="searchname" fluid/>
         <label for="name">Name</label>
       </FloatLabel>
       <FloatLabel variant="on" class="flex-1">
-        <AutoComplete id="role" v-model="role" class="w-full" fluid/>
+        <AutoComplete id="role" v-model="role" class="w-full" :suggestions="filteredrole" @complete="searchrole" fluid/>
         <label for="role">Role</label>
       </FloatLabel>
     </div>
@@ -35,6 +35,16 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+const props = defineProps(['picnamelist', 'picrolelist'])
+const filteredname = ref([])
+const filteredrole = ref([])
+const searchname = () => {
+  filteredname.value = props.picnamelist.filter(v => v.includes(name.value))
+}
+const searchrole = () => {
+  filteredrole.value = props.picrolelist.filter(v => v.includes(role.value))
+}
 const name = defineModel("name")
 const role = defineModel("role")
 const confirmed = defineModel("confirmed")

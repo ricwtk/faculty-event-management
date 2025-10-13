@@ -34,6 +34,9 @@
   </div>
   <Dialog v-model:visible="showEventEdit" modal header="Edit Event" class="w-5xl">
     <EventEdit 
+      :categorylist="allCategories"
+      :picnamelist="allPicNames"
+      :picrolelist="allPicRoles"
       v-model:name="newevname"
       v-model:evcategories="newevevcategories"
       v-model:pics="newevpics"
@@ -187,6 +190,7 @@ onAuthStateChanged(auth, (u) => {
   } else {
     getUserMeta(u)
     getEvents()
+    getEntryMeta()
   }
 });
 
@@ -239,6 +243,19 @@ const getEvents = () => {
     if (showToast) {
       showToast("info", "Events loaded")
     }
+  })
+}
+
+const allCategories = ref([])
+const allPicNames = ref([])
+const allPicRoles = ref([])
+const getEntryMeta = () => {
+  return useApi("/meta")
+  .then(r => {
+    console.log(r)
+    allCategories.value = r.categories
+    allPicNames.value = r.picNames
+    allPicRoles.value = r.picRoles
   })
 }
 

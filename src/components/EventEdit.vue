@@ -7,7 +7,7 @@
           <label for="eventname">Event Name</label>
         </FloatLabel>
         <FloatLabel variant="on">
-          <AutoComplete id="eventtype" class="w-full" @keyup.enter="addevtype" fluid/>
+          <AutoComplete id="eventtype" class="w-full" @keyup.enter="addevtype" v-model="category" :suggestions="filteredcategories" @complete="searchcategory" fluid/>
           <label for="eventtype">Event Type</label>
         </FloatLabel>
         <div class="text-xs">Use enter to register the event type</div>
@@ -44,6 +44,8 @@
         <div class="text-xs">PICs</div>
         <div class="flex flex-col gap-3">
           <PicEdit v-for="(pic, pidx) in pics" 
+            :picnamelist="picnamelist"
+            :picrolelist="picrolelist"
             v-model:name="pic.name"
             v-model:role="pic.role"
             v-model:confirmed="pic.confirmed"
@@ -71,6 +73,13 @@ const evcategories = defineModel("evcategories")
 const slots = defineModel("slots")
 const pics = defineModel("pics")
 const remarks = defineModel("remarks")
+
+const props = defineProps(['categorylist', 'picnamelist', 'picrolelist'])
+const category = ref("")
+const filteredcategories = ref([])
+const searchcategory = () => {
+  filteredcategories.value = props.categorylist.filter(v => v.includes(category.value))
+}
 
 // name: string
 // slots: [date: string, time: string, name: string, remarks: string]
