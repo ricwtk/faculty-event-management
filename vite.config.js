@@ -22,6 +22,7 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, 'index.html'),
         "event-list": path.resolve(__dirname, 'event-list.html'),
+        users: path.resolve(__dirname, 'users.html'),
       }
     }
   }
