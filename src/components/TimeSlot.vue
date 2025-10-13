@@ -19,11 +19,5 @@
 <script setup>
 defineProps(["datetime", "duration", "name", "remarks"])
 
-const zpad = (x) => String(x).padStart(2, '0')
-const getdatedisplay = (dt) => {
-  return `${zpad(dt.getDate())}-${zpad(dt.getMonth())}-${zpad(dt.getFullYear())}`
-}
-const gettimedisplay = (dt) => {
-  return `${zpad(dt.getHours())}:${zpad(dt.getMinutes())}`
-}
+import { getdatedisplay, gettimedisplay } from '../composables/datetimedisplay';
 </script>
