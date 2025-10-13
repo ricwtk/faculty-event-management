@@ -191,7 +191,7 @@ onAuthStateChanged(auth, (u) => {
 });
 
 const getUserMeta = (u) => {
-  return useApi(`/users?email=${u.email}`)
+  return useApi("/me")
     .then((uinfo) => {
       user.value = uinfo
       // console.log(uinfo)
