@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full flex flex-col items-center p-5 gap-2">
-    <div class="bg-black w-5xl px-2 py-1 rounded text-xs flex flex-row items-center">
+  <div class="w-full md:w-5xl flex flex-col items-center p-5 gap-2">
+    <div class="bg-black w-full px-2 py-1 rounded text-xs flex flex-row items-center">
       <div class="flex-1 text-white">
         Logged in as {{ user ? user.display : "" }} ({{ user ? user.email : "" }})
       </div>
@@ -8,11 +8,21 @@
         label: 'text-xs'
       }"></Button>
     </div>
-    <div class="w-5xl p-2 rounded flex gap-2">
-      <Button label="Add single user" icon="pi pi-user" severity="secondary"></Button>
-      <Button label="Add multiple users" icon="pi pi-users" severity="secondary"></Button>
+    <div class="w-full p-2 rounded flex gap-2">
+      <Button 
+        label="Add single user" 
+        icon="pi pi-user" 
+        severity="secondary"
+        :pt="{ label: 'hidden sm:block' }"
+      ></Button>
+      <Button 
+        label="Add multiple users" 
+        icon="pi pi-users" 
+        severity="secondary"
+        :pt="{ label: 'hidden sm:block' }"
+      ></Button>
     </div>
-    <div class="flex gap-2 items-center w-5xl">
+    <div class="flex gap-2 items-center w-full">
       <InputText
         v-model="searchTerm"
         placeholder="Search by name or email"
@@ -23,8 +33,55 @@
         icon="pi pi-search"
         severity="secondary"
         @click="loadUsers({ first: 0, rows: rows })"
+        :pt="{ label: 'hidden sm:block' }"
       />
     </div>
+    <DataTable
+      :value="users"
+      :lazy="true"
+      :paginator="true"
+      :rows="rows"
+      :totalRecords="totalRecords"
+      :first="first"
+      :loading="loading"
+      @page="loadUsers"
+      responsiveLayout="scroll"
+      paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+      class="w-full"
+    >
+      <ColumnGroup type="header">
+        <Row>
+          <Column header="Email" :rowspan="2" />
+          <Column header="Display Name" :rowspan="2" />
+          <Column header="Event Permission" :colspan="4" />
+          <Column header="User Permission" :colspan="4" />
+        </Row>
+        <Row>
+          <Column header="View" sortable />
+          <Column header="Edit" sortable />
+          <Column header="Create" sortable />
+          <Column header="Delete" sortable />
+          <Column header="View" sortable />
+          <Column header="Edit" sortable />
+          <Column header="Create" sortable />
+          <Column header="Delete" sortable />
+        </Row>
+        <!-- <Row>
+          <Column header="Last Year" sortable field="lastYearSale" />
+          <Column header="This Year" sortable field="thisYearSale" />
+          <Column header="Last Year" sortable field="lastYearProfit" />
+          <Column header="This Year" sortable field="thisYearProfit" />
+        </Row> -->
+      </ColumnGroup>
+      <Column field="email" header="Email" sortable />
+      <Column field="display" header="Display Name" sortable />
+      <Column header="Roles">
+        <template #body="slotProps">
+          {{ slotProps.data.roles?.join(", ") || '-' }}
+        </template>
+      </Column>
+    </DataTable>
     <DataView
       :value="users"
       :lazy="true"
@@ -34,7 +91,7 @@
       :first="first"
       @page="loadUsers"
       :loading="loading"
-      class="w-5xl"
+      class="w-full"
     >
       <template #list="slotProps">
         <div v-for="user in slotProps.items" :key="user.id" class="p-3 border-b">
@@ -53,7 +110,7 @@ import { user } from './composables/useAuth';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import { useApi } from './composables/useApi';
-import { useToast } from 'primevue/usetoast';
+// import { useToast } from 'primevue/usetoast';
 
 onAuthStateChanged(auth, (u) => {
   if (!u) {

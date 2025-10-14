@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full flex flex-col items-center p-5 gap-2">
-    <div class="bg-black w-5xl px-2 py-1 rounded text-xs flex flex-row items-center">
+  <div class="w-full md:w-5xl flex flex-col items-center p-5 gap-2">
+    <div class="bg-black w-full px-2 py-1 rounded text-xs flex flex-row items-center">
       <div class="flex-1 text-white">
         Logged in as {{ user ? user.display : "" }} ({{ user ? user.email : "" }})
       </div>
@@ -8,17 +8,17 @@
         label: 'text-xs'
       }"></Button>
     </div>
-    <div v-if="user && !user.id" class="w-5xl">
+    <div v-if="user && !user.id" class="w-full">
       Contact Dr Richard Wong from SEN to request for permission to view the FET event page
     </div>
-    <Button class="w-5xl" v-if="user && user.roles.includes('eventCreate')" @click="addNewEvent"><i class="pi pi-plus"></i>Add event</Button>
-    <div class="flex flex-row w-5xl">
+    <Button class="w-full" v-if="user && user.roles.includes('eventCreate')" @click="addNewEvent"><i class="pi pi-plus"></i>Add event</Button>
+    <div class="flex flex-row w-full">
       <SelectButton v-model="currenttimegroup" :options="timegroups" :allow-empty="false"></SelectButton>
     </div>
     <DataView :value="events" :sort-field="eventsortkey" :sort-order="1">
       <template #list="slotProps">
         <div class="flex flex-col gap-2">
-          <EventItem v-for="(ev, eIdx) in slotProps.items" :key="eIdx" class="w-5xl"
+          <EventItem v-for="(ev, eIdx) in slotProps.items" :key="eIdx" class="w-full"
             :id="ev.id"
             :name="ev.name"
             :categories="ev.categories"
@@ -32,7 +32,7 @@
       </template>
     </DataView>
   </div>
-  <Dialog v-model:visible="showEventEdit" modal header="Edit Event" class="w-5xl">
+  <Dialog v-model:visible="showEventEdit" modal header="Edit Event" class="w-full">
     <EventEdit 
       :categorylist="allCategories"
       :picnamelist="allPicNames"
