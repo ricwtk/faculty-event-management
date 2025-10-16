@@ -36,52 +36,6 @@
         :pt="{ label: 'hidden sm:block' }"
       />
     </div>
-    <DataTable
-      :value="users"
-      :lazy="true"
-      :paginator="true"
-      :rows="rows"
-      :totalRecords="totalRecords"
-      :first="first"
-      :loading="loading"
-      @page="loadUsers"
-      responsiveLayout="scroll"
-      paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
-      currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
-      class="w-full"
-    >
-      <ColumnGroup type="header">
-        <Row>
-          <Column header="Email" :rowspan="2" />
-          <Column header="Display Name" :rowspan="2" />
-          <Column header="Event Permission" :colspan="4" />
-          <Column header="User Permission" :colspan="4" />
-        </Row>
-        <Row>
-          <Column header="View" sortable />
-          <Column header="Edit" sortable />
-          <Column header="Create" sortable />
-          <Column header="Delete" sortable />
-          <Column header="View" sortable />
-          <Column header="Edit" sortable />
-          <Column header="Create" sortable />
-          <Column header="Delete" sortable />
-        </Row>
-        <!-- <Row>
-          <Column header="Last Year" sortable field="lastYearSale" />
-          <Column header="This Year" sortable field="thisYearSale" />
-          <Column header="Last Year" sortable field="lastYearProfit" />
-          <Column header="This Year" sortable field="thisYearProfit" />
-        </Row> -->
-      </ColumnGroup>
-      <Column field="email" header="Email" sortable />
-      <Column field="display" header="Display Name" sortable />
-      <Column header="Roles">
-        <template #body="slotProps">
-          {{ slotProps.data.roles?.join(", ") || '-' }}
-        </template>
-      </Column>
-    </DataTable>
     <DataView
       :value="users"
       :lazy="true"
@@ -95,9 +49,31 @@
     >
       <template #list="slotProps">
         <div v-for="user in slotProps.items" :key="user.id" class="p-3 border-b">
-          <div class="font-medium">{{ user.display }}</div>
-          <div class="text-sm text-gray-500">{{ user.email }}</div>
-          <div class="text-xs text-primary-600 mt-1">Roles: {{ user.roles.join(', ') }}</div>
+          <div class="flex flex-col sm:flex-row items-center gap-2">
+            <div class="flex flex-col flex-2">
+              <div class="font-medium">{{ user.display }}</div>
+              <div class="text-sm text-gray-500">{{ user.email }}</div>
+            </div>
+            <div class="flex-1 text-xs flex flex-row gap-1 items-right justify-end">
+              <div class="mr-2">
+                Events
+              </div>
+              <PermissionDot 
+                v-for="action in permissionactions"
+                :active="user.roles.includes(getPermissionName('event', action))" :permission="action" 
+              ></PermissionDot>
+            </div>
+            <div class="flex-1 text-sm flex flex-row gap-1 items-center justify-end">
+              <div class="mr-2">
+                Users
+              </div>
+              <PermissionDot 
+                v-for="action in permissionactions"
+                :active="user.roles.includes(getPermissionName('user', action))" :permission="action" 
+              ></PermissionDot>
+            </div>
+          </div>
+          <!-- <div class="text-xs text-primary-600 mt-1">Roles: {{ user.roles.join(', ') }}</div> -->
         </div>
       </template>
     </DataView>
@@ -110,6 +86,7 @@ import { user } from './composables/useAuth';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import { useApi } from './composables/useApi';
+import PermissionDot from './components/PermissionDot.vue';
 // import { useToast } from 'primevue/usetoast';
 
 onAuthStateChanged(auth, (u) => {
@@ -178,4 +155,6 @@ watch(searchTerm, (newVal) => {
   }, 500);
 });
 
+const permissionactions = ["view", "edit", "create", "delete"]
+const getPermissionName = (area, permission) => area + permission.charAt(0).toUpperCase() + permission.slice(1)
 </script>
