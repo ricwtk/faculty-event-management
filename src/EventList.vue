@@ -32,7 +32,7 @@
       </template>
     </DataView>
   </div>
-  <Dialog v-model:visible="showEventEdit" modal header="Edit Event" class="w-full">
+  <Dialog v-model:visible="showEventEdit" modal header="Edit Event" class="w-full m-20">
     <EventEdit 
       :categorylist="allCategories"
       :picnamelist="allPicNames"
