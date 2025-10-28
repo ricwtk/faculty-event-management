@@ -55,12 +55,16 @@
         </div>
         <Divider></Divider>
         <!-- <div class="text-xs mt-2">Remarks</div> -->
-        <div class="flex flex-col gap-2 text-sm mt-2">
-          <FloatLabel variant="on">
-            <Textarea id="remarks" v-model="remarks" class="w-full"/>
-            <label for="remarks" class="text-xs">Event Remarks</label>
-          </FloatLabel>
-        </div>
+         <div class="text-xs">Event Remarks</div>
+        <Editor id="remarks" v-model="remarks" editorStyle="height: 300px" class="w-full">
+          <template v-slot:toolbar>
+            <span class="ql-formats">
+              <button v-tooltip.bottom="'Bold'" class="ql-bold"></button>
+              <button v-tooltip.bottom="'Italic'" class="ql-italic"></button>
+              <button v-tooltip.bottom="'Underline'" class="ql-underline"></button>
+            </span>
+          </template>
+        </Editor>
       </div>
     <!-- </template> -->
   <!-- </Card> -->

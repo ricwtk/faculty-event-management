@@ -7,7 +7,7 @@
       </div>
     </template>
     <template #content>
-      <div>
+      <div class="">
         <div class="pt-1 flex gap-1 text-xs">
           <Chip v-for="(tp, idx) in categories" :label="tp" :key="idx"></Chip>
         </div>
@@ -28,7 +28,7 @@
           <Pics :pics="pics"></Pics>
         </div>
         <div class="text-xs mt-2">Remarks</div>
-        <div class="px-5">{{ remarks }}</div>
+        <div class="px-5 overflow-scroll" v-html="remarks"></div>
       </div>
     </template>
   </Card>

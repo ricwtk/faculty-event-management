@@ -15,7 +15,7 @@
     <div class="flex flex-row w-full">
       <SelectButton v-model="currenttimegroup" :options="timegroups" :allow-empty="false"></SelectButton>
     </div>
-    <DataView :value="events" :sort-field="eventsortkey" :sort-order="1">
+    <DataView :value="events" :sort-field="eventsortkey" :sort-order="1" class="w-full">
       <template #list="slotProps">
         <div class="flex flex-col gap-2">
           <EventItem v-for="(ev, eIdx) in slotProps.items" :key="eIdx" class="w-full"
