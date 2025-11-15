@@ -15,7 +15,7 @@
     <div class="flex flex-row w-full">
       <SelectButton v-model="currenttimegroup" :options="timegroups" :allow-empty="false"></SelectButton>
     </div>
-    <DataView :value="events" :sort-field="eventsortkey" :sort-order="1" class="w-full">
+    <DataView :value="events" :sort-field="eventsortkey" :sort-order="eventsortorder" class="w-full">
       <template #list="slotProps">
         <div class="flex flex-col gap-2">
           <EventItem v-for="(ev, eIdx) in slotProps.items" :key="eIdx" class="w-full"
@@ -33,7 +33,7 @@
     </DataView>
   </div>
   <Dialog v-model:visible="showEventEdit" modal header="Edit Event" class="w-full m-20">
-    <EventEdit 
+    <EventEdit
       :categorylist="allCategories"
       :picnamelist="allPicNames"
       :picrolelist="allPicRoles"
@@ -70,6 +70,7 @@ import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import { useApi } from './composables/useApi';
 import { useToast } from 'primevue/usetoast';
+import { computed } from 'vue';
 
 const events = ref([])
 
@@ -96,6 +97,9 @@ const eventsortkey = (ev) => {
   let mintimestamp = Math.min(...alltime)
   return new Date(mintimestamp)
 }
+const eventsortorder = computed(() => {
+  return currenttimegroup.value == "Upcoming" ? 1 : -1
+})
 
 const newevname = ref("")
 const newevevcategories = ref([])
