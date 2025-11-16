@@ -9,15 +9,15 @@
       }"></Button>
     </div>
     <div class="w-full p-2 rounded flex gap-2">
-      <Button 
-        label="Add single user" 
-        icon="pi pi-user" 
+      <Button
+        label="Add single user"
+        icon="pi pi-user"
         severity="secondary"
         :pt="{ label: 'hidden sm:block' }"
       ></Button>
-      <Button 
-        label="Add multiple users" 
-        icon="pi pi-users" 
+      <Button
+        label="Add multiple users"
+        icon="pi pi-users"
         severity="secondary"
         :pt="{ label: 'hidden sm:block' }"
       ></Button>
@@ -49,27 +49,27 @@
     >
       <template #list="slotProps">
         <div v-for="user in slotProps.items" :key="user.id" class="p-3 border-b">
-          <div class="flex flex-col sm:flex-row items-center gap-2">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <div class="flex flex-col flex-2">
               <div class="font-medium">{{ user.display }}</div>
               <div class="text-sm text-gray-500">{{ user.email }}</div>
             </div>
-            <div class="flex-1 text-xs flex flex-row gap-1 items-right justify-end">
-              <div class="mr-2">
+            <div class="flex-1 text-xs flex flex-row gap-3 items-right justify-end">
+              <div class="mr-2 flex-1 sm:flex-0">
                 Events
               </div>
-              <PermissionDot 
+              <PermissionDot
                 v-for="action in permissionactions"
-                :active="user.roles.includes(getPermissionName('event', action))" :permission="action" 
+                :active="user.roles.includes(getPermissionName('event', action))" :permission="action"
               ></PermissionDot>
             </div>
-            <div class="flex-1 text-sm flex flex-row gap-1 items-center justify-end">
-              <div class="mr-2">
+            <div class="flex-1 text-sm flex flex-row gap-3 items-center justify-end">
+              <div class="mr-2 flex-1 sm:flex-0">
                 Users
               </div>
-              <PermissionDot 
+              <PermissionDot
                 v-for="action in permissionactions"
-                :active="user.roles.includes(getPermissionName('user', action))" :permission="action" 
+                :active="user.roles.includes(getPermissionName('user', action))" :permission="action"
               ></PermissionDot>
             </div>
           </div>
