@@ -20,6 +20,7 @@
         icon="pi pi-users"
         severity="secondary"
         :pt="{ label: 'hidden sm:block' }"
+        @click="showAddUserDialog"
       ></Button>
     </div>
     <div class="flex gap-2 items-center w-full">
@@ -78,6 +79,23 @@
       </template>
     </DataView>
   </div>
+
+  <Dialog v-model:visible="addUserDialogVisible" modal header="Add Users" :style="{ width: '50vw' }">
+    <form @submit.prevent="addUser">
+      <div class="flex flex-col gap-2">
+        <label for="email">Email</label>
+        <input type="email" id="email" v-model="email" required>
+        <label for="name">Name</label>
+        <input type="text" id="name" v-model="name" required>
+        <label for="roles">Roles</label>
+        <select id="roles" v-model="roles" multiple required>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+        </select>
+      </div>
+      <button type="submit" class="mt-2 bg-primary-500 text-white px-4 py-2 rounded">Add User</button>
+    </form>
+  </Dialog>
 </template>
 
 <script setup>
@@ -157,4 +175,11 @@ watch(searchTerm, (newVal) => {
 
 const permissionactions = ["view", "edit", "create", "delete"]
 const getPermissionName = (area, permission) => area + permission.charAt(0).toUpperCase() + permission.slice(1)
+
+const addUserDialogVisible = ref(false);
+
+const showAddUserDialog = () => {
+  addUserDialogVisible.value = true;
+}
+
 </script>
