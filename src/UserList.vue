@@ -97,16 +97,29 @@
           rounded
         ></Button>
       </div>
-      <div class="flex flex-col gap-2">
-        <label for="email">Email</label>
-        <input type="email" id="email" v-model="email" required>
-        <label for="name">Name</label>
-        <input type="text" id="name" v-model="name" required>
-        <label for="roles">Roles</label>
-        <select id="roles" v-model="roles" multiple required>
-          <option value="admin">Admin</option>
-          <option value="user">User</option>
-        </select>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <div class="flex flex-col gap-2 flex-1">
+          <span class="font-semibold">Event</span>
+          <div class="flex flex-row gap-2 items-center pl-2"
+            v-for="action in permissionactions"
+          >
+            <PermissionDot
+              :active="false" :permission="action"
+            ></PermissionDot>
+            <div>{{ action.charAt(0).toUpperCase() + action.slice(1) }}</div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-2 flex-1">
+          <span class="font-semibold">User</span>
+          <div class="flex flex-row gap-2 items-center pl-2"
+            v-for="action in permissionactions"
+          >
+            <PermissionDot
+              :active="false" :permission="action"
+            ></PermissionDot>
+            <div>{{ action.charAt(0).toUpperCase() + action.slice(1) }}</div>
+          </div>
+        </div>
       </div>
       <button type="submit" class="mt-2 bg-primary-500 text-white px-4 py-2 rounded">Add User</button>
     </form>
