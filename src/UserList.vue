@@ -91,8 +91,11 @@
           <InputText id="name" v-model="name" class="w-full"/>
           <label for="name">Name</label>
         </FloatLabel>
-        <Button icon class="pi pi-minus-circle">
-        </Button>
+        <Button
+          icon="pi pi-minus"
+          severity="secondary"
+          rounded
+        ></Button>
       </div>
       <div class="flex flex-col gap-2">
         <label for="email">Email</label>
