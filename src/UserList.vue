@@ -82,6 +82,18 @@
 
   <Dialog v-model:visible="addUserDialogVisible" modal header="Add Users" :style="{ width: '50vw' }">
     <form @submit.prevent="addUser">
+      <div class="flex flex-row gap-2 sm:flex-row mt-1">
+        <FloatLabel variant="on" class="flex-1">
+          <InputText id="email" v-model="email" class="w-full"/>
+          <label for="email">Email</label>
+        </FloatLabel>
+        <FloatLabel variant="on" class="flex-1">
+          <InputText id="name" v-model="name" class="w-full"/>
+          <label for="name">Name</label>
+        </FloatLabel>
+        <Button icon class="pi pi-minus-circle">
+        </Button>
+      </div>
       <div class="flex flex-col gap-2">
         <label for="email">Email</label>
         <input type="email" id="email" v-model="email" required>
