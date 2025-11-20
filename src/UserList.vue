@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full md:w-5xl flex flex-col items-center p-5 gap-2">
+  <div class="w-full flex flex-col items-center p-5 gap-2">
     <div class="bg-black w-full px-2 py-1 rounded text-xs flex flex-row items-center">
       <div class="flex-1 text-white">
         Logged in as {{ user ? user.display : "" }} ({{ user ? user.email : "" }})
@@ -49,39 +49,50 @@
       class="w-full"
     >
       <template #list="slotProps">
-        <div v-for="user in slotProps.items" :key="user.id" class="p-3 border-b">
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-            <div class="flex flex-col flex-2">
-              <div class="font-medium">{{ user.display }}</div>
-              <div class="text-sm text-gray-500">{{ user.email }}</div>
-            </div>
-            <div class="flex-1 text-xs flex flex-row gap-3 items-right justify-end">
-              <div class="mr-2 flex-1 sm:flex-0">
-                Events
+        <!-- <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">  -->
+        <div class="flex flex-wrap gap-4 justify-center">
+          <!-- <template v-for="x in 53"> -->
+          <div v-for="user in slotProps.items" :key="user.id" class="p-3 border-b w-80">
+            <div class="flex flex-col items-stretch gap-2 overflow-auto">
+              <div class="flex flex-row">
+                <div class="flex flex-col flex-1">
+                  <div class="font-medium">{{ user.display }}</div>
+                  <div class="text-sm text-gray-500">{{ user.email }}</div>
+                </div>
+                <div class="flex flex-row">
+                  <Button @click="editUser(user.id)" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-plain"></Button>
+                  <Button @click="deleteUser(user.id)" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-plain"></Button>
+                </div>
               </div>
-              <PermissionDot
-                v-for="action in permissionactions"
-                :active="user.roles.includes(getPermissionName('event', action))" :permission="action"
-              ></PermissionDot>
-            </div>
-            <div class="flex-1 text-sm flex flex-row gap-3 items-center justify-end">
-              <div class="mr-2 flex-1 sm:flex-0">
-                Users
+              <div class="flex-1 text-xs flex flex-row gap-3">
+                <div class="mr-2 flex-1">
+                  Events
+                </div>
+                <PermissionDot
+                  v-for="action in permissionactions"
+                  :active="user.roles.includes(getPermissionName('event', action))" :permission="action"
+                ></PermissionDot>
               </div>
-              <PermissionDot
-                v-for="action in permissionactions"
-                :active="user.roles.includes(getPermissionName('user', action))" :permission="action"
-              ></PermissionDot>
+              <div class="flex-1 text-sm flex flex-row gap-3">
+                <div class="mr-2 flex-1">
+                  Users
+                </div>
+                <PermissionDot
+                  v-for="action in permissionactions"
+                  :active="user.roles.includes(getPermissionName('user', action))" :permission="action"
+                ></PermissionDot>
+              </div>
             </div>
+            <!-- <div class="text-xs text-primary-600 mt-1">Roles: {{ user.roles.join(', ') }}</div> -->
           </div>
-          <!-- <div class="text-xs text-primary-600 mt-1">Roles: {{ user.roles.join(', ') }}</div> -->
+          <!-- </template> -->
         </div>
       </template>
     </DataView>
   </div>
 
   <Dialog v-model:visible="addUserDialogVisible" modal header="Add Users" class="w-full m-20">
-    <form @submit.prevent="addUser">
+    <form @submit.prevent="addUsers">
       <div class="flex flex-row gap-1 mt-3 first:mt-0 items-center" v-for="(newUser, newU) in newUsers">
         <div class="flex flex-col gap-1 sm:flex-row flex-1">
           <FloatLabel variant="on" class="flex-1">
@@ -103,26 +114,26 @@
       <div class="flex flex-col gap-2 flex-1 mt-2" v-for="area in ['event', 'user']">
         <span class="font-semibold">{{ area.charAt(0).toUpperCase() + area.slice(1) }}</span>
         <div class="flex flex-col sm:flex-row gap-2">
-          <div class="flex flex-row gap-2 items-center flex-1 cursor-pointer"
+          <ToggleButton class="flex-1 cursor-pointer"
             v-for="action in permissionactions"
             @click="togglePermission(newPermissions, area, action)"
           >
             <PermissionDot
               :active="newPermissions[getPermissionName(area, action)]" :permission="action"
             ></PermissionDot>
-            <div class="flex-1">{{ action.charAt(0).toUpperCase() + action.slice(1) }}</div>
-          </div>
+            <div class="">{{ action.charAt(0).toUpperCase() + action.slice(1) }}</div>
+          </ToggleButton>
         </div>
       </div>
 
       <!-- <button type="submit" class="mt-2 bg-primary-500 text-white px-4 py-2 rounded">Add User</button> -->
-    </form>
-    <div class="flex mt-2">
-      <div class="flex-1 flex justify-end gap-2 mt-2">
-        <Button type="button" label="Cancel" severity="secondary" @click="addUserDialogVisible=false"></Button>
-        <Button type="button" label="Save" @click=""></Button>
+      <div class="flex mt-2">
+        <div class="flex-1 flex justify-end gap-2 mt-2">
+          <Button type="button" label="Cancel" severity="secondary" @click="addUserDialogVisible=false"></Button>
+          <Button type="submit" label="Save"></Button>
+        </div>
       </div>
-    </div>
+    </form>
   </Dialog>
 </template>
 
@@ -234,5 +245,20 @@ const newPermissions = ref(["event", "user"].reduce((a, c) => {
 const togglePermission = (permissionObj, area, permission) => {
   console.log(permissionObj.value)
   permissionObj[getPermissionName(area, permission)] = !permissionObj[getPermissionName(area, permission)]
+}
+
+const addUsers = () => {
+  addUserDialogVisible.value = false;
+  console.log(newUsers.value)
+  console.log(newPermissions.value)
+}
+const editUser = (id) => {
+  console.log(id)
+}
+const deleteUser = (id) => {
+  console.log(id)
+}
+const editPermission = (id) => {
+  console.log(id)
 }
 </script>
