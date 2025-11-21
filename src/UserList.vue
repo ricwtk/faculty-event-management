@@ -37,6 +37,8 @@
         :pt="{ label: 'hidden sm:block' }"
       />
     </div>
+    {{ users }}
+    {{ newPermissions }}
     <DataView
       :value="users"
       :lazy="true"
@@ -92,48 +94,46 @@
   </div>
 
   <Dialog v-model:visible="addUserDialogVisible" modal header="Add Users" class="w-full m-20">
-    <form @submit.prevent="addUsers">
-      <div class="flex flex-row gap-1 mt-3 first:mt-0 items-center" v-for="(newUser, newU) in newUsers">
-        <div class="flex flex-col gap-1 sm:flex-row flex-1">
-          <FloatLabel variant="on" class="flex-1">
-            <InputText :id="`email${newU}`" v-model="newUser.email" class="w-full"/>
-            <label :for="`email${newU}`">Email</label>
-          </FloatLabel>
-          <FloatLabel variant="on" class="flex-1">
-            <InputText :id="`name${newU}`" v-model="newUser.name" class="w-full"/>
-            <label :for="`name${newU}`">Name</label>
-          </FloatLabel>
-        </div>
-        <Button
-          icon="pi pi-minus"
-          severity="secondary"
-          @click="removeNewUserRow(newU)"
-        ></Button>
+    <div class="flex flex-row gap-1 mt-3 first:mt-0 items-center" v-for="(newUser, newU) in newUsers">
+      <div class="flex flex-col gap-1 sm:flex-row flex-1">
+        <FloatLabel variant="on" class="flex-1">
+          <InputText :id="`email${newU}`" v-model="newUser.email" class="w-full"/>
+          <label :for="`email${newU}`">Email</label>
+        </FloatLabel>
+        <FloatLabel variant="on" class="flex-1">
+          <InputText :id="`name${newU}`" v-model="newUser.name" class="w-full"/>
+          <label :for="`name${newU}`">Name</label>
+        </FloatLabel>
       </div>
-      <Button fluid class="mt-2" severity="secondary" @click="addNewUserRow"><i class="pi pi-plus"></i></Button>
-      <div class="flex flex-col gap-2 flex-1 mt-2" v-for="area in ['event', 'user']">
-        <span class="font-semibold">{{ area.charAt(0).toUpperCase() + area.slice(1) }}</span>
-        <div class="flex flex-col sm:flex-row gap-2">
-          <ToggleButton class="flex-1 cursor-pointer"
-            v-for="action in permissionactions"
-            @click="togglePermission(newPermissions, area, action)"
-          >
-            <PermissionDot
-              :active="newPermissions[getPermissionName(area, action)]" :permission="action"
-            ></PermissionDot>
-            <div class="">{{ action.charAt(0).toUpperCase() + action.slice(1) }}</div>
-          </ToggleButton>
-        </div>
+      <Button
+        icon="pi pi-minus"
+        severity="secondary"
+        @click="removeNewUserRow(newU)"
+      ></Button>
+    </div>
+    <Button fluid class="mt-2" severity="secondary" @click="addNewUserRow"><i class="pi pi-plus"></i></Button>
+    <div class="flex flex-col gap-2 flex-1 mt-2" v-for="area in ['event', 'user']">
+      <span class="font-semibold">{{ area.charAt(0).toUpperCase() + area.slice(1) }}</span>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <ToggleButton class="flex-1 cursor-pointer"
+          v-for="action in permissionactions"
+          @click="togglePermission(newPermissions, area, action)"
+        >
+          <PermissionDot
+            :active="newPermissions[getPermissionName(area, action)]" :permission="action"
+          ></PermissionDot>
+          <div class="">{{ action.charAt(0).toUpperCase() + action.slice(1) }}</div>
+        </ToggleButton>
       </div>
+    </div>
 
-      <!-- <button type="submit" class="mt-2 bg-primary-500 text-white px-4 py-2 rounded">Add User</button> -->
-      <div class="flex mt-2">
-        <div class="flex-1 flex justify-end gap-2 mt-2">
-          <Button type="button" label="Cancel" severity="secondary" @click="addUserDialogVisible=false"></Button>
-          <Button type="submit" label="Save"></Button>
-        </div>
+    <!-- <button type="submit" class="mt-2 bg-primary-500 text-white px-4 py-2 rounded">Add User</button> -->
+    <div class="flex mt-2">
+      <div class="flex-1 flex justify-end gap-2 mt-2">
+        <Button type="button" label="Cancel" severity="secondary" @click="addUserDialogVisible=false"></Button>
+        <Button type="submit" label="Save" @click="addUsers"></Button>
       </div>
-    </form>
+    </div>
   </Dialog>
 </template>
 
@@ -222,13 +222,19 @@ const showAddUserDialog = () => {
 }
 
 const newUsers = ref([{
-  "email": "",
-  "name": ""
+  email: "",
+  name: ""
 }])
+const resetNewUsers = () => {
+  newUsers.value = [{
+    email: "",
+    name: ""
+  }]
+}
 const addNewUserRow = () => {
   newUsers.value.push({
-    "email": "",
-    "name": ""
+    email: "",
+    name: ""
   })
 }
 const removeNewUserRow = (r) => {
@@ -241,7 +247,15 @@ const newPermissions = ref(["event", "user"].reduce((a, c) => {
   }, a)
   return a
 }, {}))
-
+const resetNewPermissions = () => {
+  newPermissions.value = ["event", "user"].reduce((a, c) => {
+    permissionactions.reduce((acc, curr) => {
+      acc[getPermissionName(c, curr)] = false
+      return acc
+    }, a)
+    return a
+  }, {})
+}
 const togglePermission = (permissionObj, area, permission) => {
   console.log(permissionObj.value)
   permissionObj[getPermissionName(area, permission)] = !permissionObj[getPermissionName(area, permission)]
@@ -249,8 +263,21 @@ const togglePermission = (permissionObj, area, permission) => {
 
 const addUsers = () => {
   addUserDialogVisible.value = false;
-  console.log(newUsers.value)
-  console.log(newPermissions.value)
+  newUsers.value = newUsers.value.filter(user => user.email !== "")
+  let newUserList = newUsers.value.map(user => ({
+    email: user.email,
+    display: user.name,
+    roles: Object.keys(newPermissions.value).reduce((acc, curr) => {
+      if (newPermissions.value[curr]) {
+        acc.push(curr)
+      }
+      return acc
+    }, [])
+  }))
+  console.debug(newUserList)
+  console.debug(newPermissions.value)
+  resetNewUsers()
+  resetNewPermissions()
 }
 const editUser = (id) => {
   console.log(id)
