@@ -62,7 +62,7 @@
                   <div class="text-sm text-gray-500">{{ user.email }}</div>
                 </div>
                 <div class="flex flex-row">
-                  <Button @click="editUser(user.id)" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-plain"></Button>
+                  <Button @click="showEditUserDialog(user)" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-plain"></Button>
                   <Button @click="deleteUser(user.id)" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-plain"></Button>
                 </div>
               </div>
@@ -117,7 +117,7 @@
       <div class="flex flex-col sm:flex-row gap-2">
         <ToggleButton class="flex-1 cursor-pointer"
           v-for="action in permissionactions"
-          @click="togglePermission(newPermissions, area, action)"
+          v-model="newPermissions[getPermissionName(area, action)]"
         >
           <PermissionDot
             :active="newPermissions[getPermissionName(area, action)]" :permission="action"
@@ -132,6 +132,41 @@
       <div class="flex-1 flex justify-end gap-2 mt-2">
         <Button type="button" label="Cancel" severity="secondary" @click="addUserDialogVisible=false"></Button>
         <Button type="submit" label="Save" @click="addUsers"></Button>
+      </div>
+    </div>
+  </Dialog>
+
+  <Dialog v-model:visible="editUserDialogVisible" modal header="Edit User" class="w-full m-20">
+    <div class="flex flex-col gap-1 mt-1">
+      <div class="flex flex-col gap-2 sm:gap-1 sm:flex-row flex-1">
+        <FloatLabel variant="on" class="flex-1">
+          <InputText disabled id="email" v-model="userToEdit.email" class="w-full" />
+          <label for="email">Email</label>
+        </FloatLabel>
+        <FloatLabel variant="on" class="flex-1">
+          <InputText id="display" v-model="userToEdit.display" class="w-full" />
+          <label for="display">Display Name</label>
+        </FloatLabel>
+      </div>
+      <div class="flex flex-col gap-0.5 flex-1 mt-2" v-for="area in ['event', 'user']">
+        <span class="font-semibold">{{ area.charAt(0).toUpperCase() + area.slice(1) }}</span>
+        <div class="flex flex-col sm:flex-row gap-1">
+          <ToggleButton class="flex-1 cursor-pointer"
+            v-for="action in permissionactions"
+            v-model="userToEdit.permissions[getPermissionName(area, action)]"
+          >
+            <PermissionDot
+              :active="userToEdit.permissions[getPermissionName(area, action)]" :permission="action"
+            ></PermissionDot>
+            <div class="">{{ action.charAt(0).toUpperCase() + action.slice(1) }}</div>
+          </ToggleButton>
+        </div>
+      </div>
+    </div>
+    <div class="flex mt-2">
+      <div class="flex-1 flex justify-end gap-2 mt-2">
+        <Button type="button" label="Cancel" severity="secondary" @click="editUserDialogVisible=false"></Button>
+        <Button type="submit" label="Save" @click="editUser"></Button>
       </div>
     </div>
   </Dialog>
@@ -215,12 +250,11 @@ watch(searchTerm, (newVal) => {
 const permissionactions = ["view", "edit", "create", "delete"]
 const getPermissionName = (area, permission) => area + permission.charAt(0).toUpperCase() + permission.slice(1)
 
+// users creation
 const addUserDialogVisible = ref(false);
-
 const showAddUserDialog = () => {
   addUserDialogVisible.value = true;
 }
-
 const newUsers = ref([{
   email: "",
   name: ""
@@ -256,11 +290,6 @@ const resetNewPermissions = () => {
     return a
   }, {})
 }
-const togglePermission = (permissionObj, area, permission) => {
-  console.log(permissionObj.value)
-  permissionObj[getPermissionName(area, permission)] = !permissionObj[getPermissionName(area, permission)]
-}
-
 const addUsers = () => {
   addUserDialogVisible.value = false;
   newUsers.value = newUsers.value.filter(user => user.email !== "")
@@ -279,13 +308,42 @@ const addUsers = () => {
   resetNewUsers()
   resetNewPermissions()
 }
-const editUser = (id) => {
-  console.log(id)
+
+// edit user
+const editUserDialogVisible = ref(false);
+const userToEdit = ref({
+  id: "",
+  email: "",
+  display: "",
+  permissions: ["event", "user"].reduce((a, c) => {
+    permissionactions.reduce((acc, curr) => {
+      acc[getPermissionName(c, curr)] = false
+      return acc
+    }, a)
+    return a
+  }, {})
+})
+const showEditUserDialog = (user) => {
+  editUserDialogVisible.value = true;
+  userToEdit.value = {
+    ...user,
+    permissions: user.roles.reduce((acc, curr) => {
+      acc[curr] = true
+      return acc
+    }, {})
+  }
 }
+const editUser = () => {
+  console.log(userToEdit.value)
+  userToEdit.value.roles = Object.keys(userToEdit.value.permissions).reduce((acc, curr) => {
+    if (userToEdit.value.permissions[curr]) {
+      acc.push(curr)
+    }
+    return acc
+  }, [])
+}
+// delete user
 const deleteUser = (id) => {
-  console.log(id)
-}
-const editPermission = (id) => {
   console.log(id)
 }
 </script>
