@@ -300,10 +300,13 @@ const addUsers = () => {
       return acc
     }, [])
   }))
+
   console.debug(newUserList)
   console.debug(newPermissions.value)
   resetNewUsers()
   resetNewPermissions()
+
+  return saveUsersToDb(newUserList)
 }
 
 // edit user
@@ -338,6 +341,21 @@ const editUser = () => {
     }
     return acc
   }, [])
+  return saveUsersToDb([{
+    id: userToEdit.value.id,
+    email: userToEdit.value.email,
+    display: userToEdit.value.display,
+    roles: userToEdit.value.roles
+  }])
+}
+const saveUsersToDb = (users) => {
+  return useApi("/updateUsers", {
+    method: "POST",
+    body: JSON.stringify(users)
+  }).then(() => {
+    console.log('Users saved successfully')
+    loadUsers({ first: 0, rows: rows.value })
+  })
 }
 // delete user
 const confirmDeleteUser = (ev, user) => {
