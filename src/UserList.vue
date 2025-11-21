@@ -37,8 +37,6 @@
         :pt="{ label: 'hidden sm:block' }"
       />
     </div>
-    {{ users }}
-    {{ newPermissions }}
     <DataView
       :value="users"
       :lazy="true"
@@ -52,9 +50,9 @@
     >
       <template #list="slotProps">
         <!-- <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">  -->
-        <div class="flex flex-wrap gap-4 justify-center">
-          <!-- <template v-for="x in 53"> -->
-          <div v-for="user in slotProps.items" :key="user.id" class="p-3 border-b w-80">
+        <div class="flex flex-wrap gap-4 justify-center mb-2">
+          <!-- <template v-for="x in 53">   -->
+          <div v-for="user in slotProps.items" :key="user.id" class="p-3 border rounded w-80" style="border: 1px solid var(--p-inputtext-border-color)">
             <div class="flex flex-col items-stretch gap-2 overflow-auto">
               <div class="flex flex-row">
                 <div class="flex flex-col flex-1">
@@ -63,7 +61,7 @@
                 </div>
                 <div class="flex flex-row">
                   <Button @click="showEditUserDialog(user)" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-plain"></Button>
-                  <Button @click="deleteUser(user.id)" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-plain"></Button>
+                  <Button @click="confirmDeleteUser($event, user)" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-plain"></Button>
                 </div>
               </div>
               <div class="flex-1 text-xs flex flex-row gap-3">
@@ -87,11 +85,13 @@
             </div>
             <!-- <div class="text-xs text-primary-600 mt-1">Roles: {{ user.roles.join(', ') }}</div> -->
           </div>
-          <!-- </template> -->
+          <!-- </template>   -->
         </div>
       </template>
     </DataView>
   </div>
+
+  <ConfirmPopup class="m-2"/>
 
   <Dialog v-model:visible="addUserDialogVisible" modal header="Add Users" class="w-full m-20">
     <div class="flex flex-row gap-1 mt-3 first:mt-0 items-center" v-for="(newUser, newU) in newUsers">
@@ -180,6 +180,9 @@ import { auth } from './firebase';
 import { useApi } from './composables/useApi';
 import PermissionDot from './components/PermissionDot.vue';
 // import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
+
+const confirm = useConfirm();
 
 onAuthStateChanged(auth, (u) => {
   if (!u) {
@@ -343,6 +346,30 @@ const editUser = () => {
   }, [])
 }
 // delete user
+const confirmDeleteUser = (ev, user) => {
+  confirm.require({
+    target: ev.currentTarget,
+    message: `Are you sure you want to delete this user with email ${user.email}?`,
+    // header: 'Delete Confirmation',
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: 'Cancel',
+      severity: 'secondary',
+      outlined: true
+    },
+    reject: () => {
+      console.log('User deletion cancelled')
+    },
+    acceptProps: {
+      label: 'Delete',
+      severity: 'danger',
+      outlined: true
+    },
+    accept: () => {
+      deleteUser(user.id)
+    },
+  });
+}
 const deleteUser = (id) => {
   console.log(id)
 }
