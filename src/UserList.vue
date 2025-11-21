@@ -8,15 +8,9 @@
         label: 'text-xs'
       }"></Button>
     </div>
-    <div class="w-full p-2 rounded flex gap-2">
+    <div class="w-full flex gap-2">
       <Button
-        label="Add single user"
-        icon="pi pi-user"
-        severity="secondary"
-        :pt="{ label: 'hidden sm:block' }"
-      ></Button>
-      <Button
-        label="Add multiple users"
+        label="Add users"
         icon="pi pi-users"
         severity="secondary"
         :pt="{ label: 'hidden sm:block' }"
