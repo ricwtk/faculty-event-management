@@ -88,7 +88,7 @@
   <ConfirmPopup class="m-2"/>
 
   <Dialog v-model:visible="addUserDialogVisible" modal header="Add Users" class="w-full m-20">
-    <div class="flex flex-row gap-1 mt-3 first:mt-0 items-center" v-for="(newUser, newU) in newUsers">
+    <div class="flex flex-row gap-1 mt-3 first:mt-1 items-center" v-for="(newUser, newU) in newUsers">
       <div class="flex flex-col gap-1 sm:flex-row flex-1">
         <FloatLabel variant="on" class="flex-1">
           <InputText :id="`email${newU}`" v-model="newUser.email" class="w-full"/>
@@ -164,6 +164,14 @@
       </div>
     </div>
   </Dialog>
+
+  <Toast position="bottom-center">
+    <template #container="{ message, closeCallback }">
+      <div class="flex flex-col items-center">
+        <div class="font-medium text-sm m-2">{{ message.detail }}</div>
+      </div>
+    </template>
+  </Toast>
 </template>
 
 <script setup>
@@ -173,7 +181,7 @@ import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import { useApi } from './composables/useApi';
 import PermissionDot from './components/PermissionDot.vue';
-// import { useToast } from 'primevue/usetoast';
+import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 
 const confirm = useConfirm();
@@ -334,7 +342,7 @@ const showEditUserDialog = (user) => {
   }
 }
 const editUser = () => {
-  addUserDialogVisible.value = false;
+  editUserDialogVisible.value = false;
   userToEdit.value.roles = Object.keys(userToEdit.value.permissions).reduce((acc, curr) => {
     if (userToEdit.value.permissions[curr]) {
       acc.push(curr)
@@ -387,5 +395,11 @@ const confirmDeleteUser = (ev, user) => {
 }
 const deleteUser = (id) => {
   console.log(id)
+}
+
+const toast = useToast()
+const showToast = (svrt, msg) => {
+  let summary = svrt.charAt(0).toUpperCase() + svrt.slice(1);
+  toast.add({ severity: svrt, summary: summary, detail: msg, life: 1500 })
 }
 </script>
