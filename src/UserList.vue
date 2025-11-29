@@ -358,14 +358,15 @@ const editUser = () => {
 }
 const saveUsersToDb = (users) => {
   // console.log(users)
+  showToast('info', 'Updating users...')
   return useApi("/updateUsers", {
     method: "POST",
     body: JSON.stringify(users)
   }).then(() => {
-    console.log('Users saved successfully')
+    showToast('success', 'Users saved successfully')
     loadUsers({ first: 0, rows: rows.value })
   }).catch((error) => {
-    console.log('Users saved failed', error)
+    showToast('error', `Users saved failed: ${error.message}`)
   })
 }
 // delete user
@@ -394,7 +395,15 @@ const confirmDeleteUser = (ev, user) => {
   });
 }
 const deleteUser = (id) => {
-  console.log(id)
+  showToast('info', 'Deleting user...')
+  return useApi(`/deleteUser/${id}`, {
+    method: "DELETE"
+  }).then(() => {
+    showToast('success', 'User deleted successfully')
+    loadUsers({ first: 0, rows: rows.value })
+  }).catch((error) => {
+    showToast('error', `User deletion failed: ${error}`)
+  })
 }
 
 const toast = useToast()
