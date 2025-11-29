@@ -10,6 +10,7 @@
     </div>
     <div class="w-full flex gap-2">
       <Button
+        v-if="user && user.roles.includes('userCreate')"
         label="Add users"
         icon="pi pi-users"
         severity="secondary"
@@ -17,7 +18,7 @@
         @click="showAddUserDialog"
       ></Button>
     </div>
-    <div class="flex gap-2 items-center w-full">
+    <div class="flex gap-2 items-center w-full" v-if="user && user.roles.includes('userView')">
       <InputText
         v-model="searchTerm"
         placeholder="Search by name or email"
@@ -46,16 +47,24 @@
         <!-- <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">  -->
         <div class="flex flex-wrap gap-4 justify-center mb-2">
           <!-- <template v-for="x in 53">   -->
-          <div v-for="user in slotProps.items" :key="user.id" class="p-3 border rounded w-80" style="border: 1px solid var(--p-inputtext-border-color)">
+          <div v-for="userinlist in slotProps.items" :key="userinlist.id" class="p-3 border rounded w-80" style="border: 1px solid var(--p-inputtext-border-color)">
             <div class="flex flex-col items-stretch gap-2 overflow-auto">
               <div class="flex flex-row">
                 <div class="flex flex-col flex-1">
-                  <div class="font-medium">{{ user.display }}</div>
-                  <div class="text-sm text-gray-500">{{ user.email }}</div>
+                  <div class="font-medium">{{ userinlist.display }}</div>
+                  <div class="text-sm text-gray-500">{{ userinlist.email }}</div>
                 </div>
                 <div class="flex flex-row">
-                  <Button @click="showEditUserDialog(user)" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-plain"></Button>
-                  <Button @click="confirmDeleteUser($event, user)" icon="pi pi-trash" class="p-button-rounded p-button-text p-button-plain"></Button>
+                  <Button
+                    @click="showEditUserDialog(userinlist)"
+                    icon="pi pi-pencil"
+                    class="p-button-rounded p-button-text p-button-plain"
+                    v-if="(user && user.roles.includes('userEdit')) || (user.email == userinlist.email)"></Button>
+                  <Button
+                    @click="confirmDeleteUser($event, userinlist)"
+                    icon="pi pi-trash"
+                    class="p-button-rounded p-button-text p-button-plain"
+                    v-if="user && user.roles.includes('userDelete')"></Button>
                 </div>
               </div>
               <div class="flex-1 text-xs flex flex-row gap-3">
@@ -64,7 +73,7 @@
                 </div>
                 <PermissionDot
                   v-for="action in permissionactions"
-                  :active="user.roles.includes(getPermissionName('event', action))" :permission="action"
+                  :active="userinlist.roles.includes(getPermissionName('event', action))" :permission="action"
                 ></PermissionDot>
               </div>
               <div class="flex-1 text-sm flex flex-row gap-3">
@@ -73,7 +82,7 @@
                 </div>
                 <PermissionDot
                   v-for="action in permissionactions"
-                  :active="user.roles.includes(getPermissionName('user', action))" :permission="action"
+                  :active="userinlist.roles.includes(getPermissionName('user', action))" :permission="action"
                 ></PermissionDot>
               </div>
             </div>
@@ -142,7 +151,7 @@
           <label for="display">Display Name</label>
         </FloatLabel>
       </div>
-      <div class="flex flex-col gap-0.5 flex-1 mt-2" v-for="area in ['event', 'user']">
+      <div class="flex flex-col gap-0.5 flex-1 mt-2" v-for="area in ['event', 'user']" v-if="user && user.roles.includes('userEdit')">
         <span class="font-semibold">{{ area.charAt(0).toUpperCase() + area.slice(1) }}</span>
         <div class="flex flex-col sm:flex-row gap-1">
           <ToggleButton class="flex-1 cursor-pointer"
@@ -190,8 +199,13 @@ onAuthStateChanged(auth, (u) => {
   if (!u) {
     window.location.href = import.meta.env.VITE_BASE_URL
   } else {
-    getUserMeta(u)
-    loadUsers({ first: 0, rows: rows.value })
+    getUserMeta(u).then(() => {
+      if (user.value.roles.includes("userView")) {
+        loadUsers({ first: 0, rows: rows.value })
+      } else {
+        window.location.href = import.meta.env.VITE_BASE_URL
+      }
+    })
   }
 });
 
