@@ -334,7 +334,7 @@ const showEditUserDialog = (user) => {
   }
 }
 const editUser = () => {
-  console.log(userToEdit.value)
+  addUserDialogVisible.value = false;
   userToEdit.value.roles = Object.keys(userToEdit.value.permissions).reduce((acc, curr) => {
     if (userToEdit.value.permissions[curr]) {
       acc.push(curr)
@@ -349,12 +349,15 @@ const editUser = () => {
   }])
 }
 const saveUsersToDb = (users) => {
+  // console.log(users)
   return useApi("/updateUsers", {
     method: "POST",
     body: JSON.stringify(users)
   }).then(() => {
     console.log('Users saved successfully')
     loadUsers({ first: 0, rows: rows.value })
+  }).catch((error) => {
+    console.log('Users saved failed', error)
   })
 }
 // delete user
